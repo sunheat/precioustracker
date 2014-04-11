@@ -17,6 +17,7 @@ public class PreciousTrackerModel {
 
 	public static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 	public static final String PHOTO_DIR = "PreciousTrackerSnapshots";
+	public static final int REQ_CODE_ADD_MOVE = 2336;
 
 	private PreciousTrackerDbHelper dbHelper;
 	private static PreciousTrackerModel instance;

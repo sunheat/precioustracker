@@ -96,7 +96,7 @@ public class MainActivity extends FragmentActivity {
 			switch (viewPager.getCurrentItem()) {
 			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_MOVES:
 				Intent intent = new Intent(getBaseContext(), AddMoveActivity.class);
-				startActivity(intent);
+				startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_ADD_MOVE);
 				return true;
 			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_ITEMS:
 				return true;

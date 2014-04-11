@@ -1,6 +1,8 @@
 package com.maxsoft.precioustracker;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,17 +14,19 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -33,7 +37,6 @@ import com.maxsoft.precioustracker.model.PreciousTrackerModel;
 public class AddMoveActivity extends Activity implements OnItemSelectedListener {
 
 	private PreciousTrackerModel model;
-	private Uri photoUri;
 	private PreciousMove newMove;
 	private List<PreciousItem> itemList;
 
@@ -81,10 +84,21 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (resultCode == RESULT_OK) {
-			Uri photoUri = data.getData();
-			getPreciousMove();
-			newMove.setSnapshot(photoUri.getPath());
+		if (requestCode == PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+			if (resultCode == RESULT_OK) {
+				getPreciousMove();
+				String snapshotPath = newMove.getSnapshot();
+				File file = new File(snapshotPath);
+				Uri imageUri = Uri.fromFile(file);
+
+				ImageView imgSnapshot = (ImageView) findViewById(R.id.imgSnapshot);
+				imgSnapshot.setImageURI(imageUri);
+
+				newMove.setSnapshot(snapshotPath);
+			} else {
+				getPreciousMove();
+				newMove.setSnapshot(null);
+			}
 		}
 	}
 
@@ -99,9 +113,10 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 	}
 
 	public void onSnapshot(View v) {
+		getPreciousMove().setSnapshot(getOutputMediaFilePath().toString());
 		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		photoUri = getOutputMediaFileUri();
-		intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
+		File file = new File(getOutputMediaFilePath());
+		intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
 		startActivityForResult(intent, PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 	}
 
@@ -122,17 +137,14 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 		newMove.setDateMoved(dateMoved);
 
 		model.insertNewMove(newMove);
-
-		Intent upIntent = new Intent(this, MainActivity.class);
-		upIntent.putExtra(MainActivity.INTENT_MSG_UPDATE, true);
-		NavUtils.navigateUpTo(this, upIntent);
+		finishActivity(PreciousTrackerModel.REQ_CODE_ADD_MOVE);
 	}
 
 	public void onCancel(View v) {
-		NavUtils.navigateUpFromSameTask(this);
+		finish();
 	}
 
-	private Uri getOutputMediaFileUri() {
+	private String getOutputMediaFilePath() {
 		// checks whether external storage is mounted
 		String sdState = Environment.getExternalStorageState();
 		if (sdState.equals(Environment.MEDIA_MOUNTED)) {
@@ -149,7 +161,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 			DateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
 			String timeStamp = formatter.format(new Date());
 			File mediaFile = new File(mediaDir.getPath() + File.separator + timeStamp + ".jpg");
-			return Uri.fromFile(mediaFile);
+			return mediaFile.getPath();
 		} else {
 			// else, use internal storage
 			// TODO location of snapshot using internal storage

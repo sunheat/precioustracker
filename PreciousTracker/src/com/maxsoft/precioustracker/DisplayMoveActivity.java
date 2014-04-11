@@ -1,5 +1,6 @@
 package com.maxsoft.precioustracker;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -44,8 +45,11 @@ public class DisplayMoveActivity extends Activity {
 		txtFromWhere.setText(move.getFromWhere());
 		txtToWhere.setText(move.getToWhere());
 		String snapshotFilePath = move.getSnapshot();
-		Uri snapshotUri = Uri.parse(snapshotFilePath);
-		imgSnapshot.setImageURI(snapshotUri);
+		if (snapshotFilePath != null) {
+			File file = new File(snapshotFilePath);
+			Uri snapshotUri = Uri.fromFile(file);
+			imgSnapshot.setImageURI(snapshotUri);
+		}
 	}
 
 	@Override
