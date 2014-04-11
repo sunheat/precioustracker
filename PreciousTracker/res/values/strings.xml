@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Precious Tracker</string>
+    <string name="action_settings">Settings</string>
+    <string name="recentMoves">Recent Moves</string>
+    <string name="items">Items</string>
+    <string name="moves">Moves</string>
+    <string name="photoLastMove">Photo of last movement</string>
+    <string name="add">+</string>
+    <string name="title_activity_display_move">Display move</string>
+    <string name="itemName">Item Name</string>
+    <string name="dateMoved">Date Moved</string>
+    <string name="timeMoved">Time Moved</string>
+    <string name="fromWhere">Moved From</string>
+    <string name="toWhere">Moved To</string>
+    <string name="lblSnapshot">Snapshot</string>
+    <string name="descImgSnapshot">Snapshot for this move</string>
+    
+    <string name="title_activity_add_move">Add a move</string>
+    <string name="ChooseDateHint">Click to select date</string>
+    <string name="ChooseTimeHint">Click to select time</string>
+    <string name="FromWhereHint">Original location</string>
+    <string name="ToWhereHint">New location</string>
+    
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+
+</resources>

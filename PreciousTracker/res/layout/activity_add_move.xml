@@ -1,0 +1,176 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TableLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin" >
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblItemName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/element_margin"
+                android:text="@string/itemName"
+                android:textAppearance="@style/LabelTextBold" />
+
+            <Spinner
+                android:id="@+id/lstItem"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@android:style/Theme.Holo.Light" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblDateMoved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dateMoved"
+                android:textAppearance="@style/LabelTextBold" />
+
+            <EditText
+                android:id="@+id/txtDateMoved"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:focusable="false"
+                android:hint="@string/ChooseDateHint"
+                android:inputType="date"
+                android:onClick="showDatePickerDialog"
+                android:paddingLeft="@dimen/element_margin" >
+
+                <requestFocus />
+            </EditText>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblTimeMoved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/element_margin"
+                android:text="@string/timeMoved"
+                android:textAppearance="@style/LabelTextBold" />
+
+            <EditText
+                android:id="@+id/txtTimeMoved"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:focusable="false"
+                android:hint="@string/ChooseTimeHint"
+                android:inputType="time"
+                android:onClick="showTimePickerDialog" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblFromWhere"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/element_margin"
+                android:text="@string/fromWhere"
+                android:textAppearance="@style/LabelTextBold" />
+
+            <EditText
+                android:id="@+id/txtFromWhere"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/FromWhereHint"
+                android:inputType="text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblToWhere"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/element_margin"
+                android:text="@string/toWhere"
+                android:textAppearance="@style/LabelTextBold" />
+
+            <EditText
+                android:id="@+id/txtToWhere"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/ToWhereHint"
+                android:inputType="text" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/lblSnapshot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingRight="@dimen/element_margin"
+                android:text="@string/lblSnapshot"
+                android:textAppearance="@style/LabelTextBold" />
+
+            <ImageView
+                android:id="@+id/imgSnapshot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/descImgSnapshot"
+                android:onClick="onSnapshot"
+                android:src="@drawable/ic_action_photo" />
+        </TableRow>
+    </TableLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@android:attr/buttonBarButtonStyle" >
+
+        <Button
+            android:id="@+id/btnCancelMove"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:onClick="onCancel"
+            style="@android:attr/buttonBarButtonStyle" />
+
+        <Button
+            android:id="@+id/btnSaveMove"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/save"
+            android:onClick="onSave"
+            style="@android:attr/buttonBarButtonStyle" />
+    </LinearLayout>
+
+</LinearLayout>
