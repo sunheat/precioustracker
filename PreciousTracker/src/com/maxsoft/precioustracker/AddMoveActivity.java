@@ -1,8 +1,6 @@
 package com.maxsoft.precioustracker;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,12 +8,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -137,13 +134,16 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 		newMove.setDateMoved(dateMoved);
 
 		model.insertNewMove(newMove);
-		finishActivity(PreciousTrackerModel.REQ_CODE_ADD_MOVE);
-	}
-
-	public void onCancel(View v) {
+		setResult(RESULT_OK);
 		finish();
 	}
 
+	public void onCancel(View v) {
+		setResult(RESULT_CANCELED);
+		finish();
+	}
+
+	@SuppressLint("SimpleDateFormat")
 	private String getOutputMediaFilePath() {
 		// checks whether external storage is mounted
 		String sdState = Environment.getExternalStorageState();
@@ -158,7 +158,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 					return null;
 				}
 			}
-			DateFormat formatter = new SimpleDateFormat("yyyyMMdd_HHmmss");
+			DateFormat formatter = new SimpleDateFormat(PreciousTrackerModel.IMG_FORMAT_STRING);
 			String timeStamp = formatter.format(new Date());
 			File mediaFile = new File(mediaDir.getPath() + File.separator + timeStamp + ".jpg");
 			return mediaFile.getPath();

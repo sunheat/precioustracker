@@ -42,11 +42,4 @@ public class PreciousTrackerPagerAdapter extends FragmentPagerAdapter {
 		return TAB_COUNT;
 	}
 
-	public void setUpdate(boolean update) {
-		if (movesFragment == null) {
-			movesFragment = new PreciousMovesFragment();
-		}
-		movesFragment.setUpdate(update);
-	}
-
 }

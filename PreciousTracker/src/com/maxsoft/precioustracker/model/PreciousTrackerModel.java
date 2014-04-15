@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.maxsoft.precioustracker.model.PreciousCategoryTable.PreciousCategoryEntry;
 import com.maxsoft.precioustracker.model.PreciousItemTable.PreciousItemEntry;
@@ -19,14 +23,20 @@ public class PreciousTrackerModel {
 	public static final String PHOTO_DIR = "PreciousTrackerSnapshots";
 	public static final int REQ_CODE_ADD_MOVE = 2336;
 
-	private PreciousTrackerDbHelper dbHelper;
+	public static final String INTENT_MSG_MODEL = "precioustracker.intent.model";
+	public static final String INTENT_MSG_REFRESH_MOVE_LIST = "precioustracker.intent.refresh_move_list";
+	public static final String IMG_FORMAT_STRING = "yyyyMMdd_HHmmss";
+	public static final int LOADER_ID_MOVE_LIST = 6578;
+	
 	private static PreciousTrackerModel instance;
 
-	public static final String INTENT_MSG_MODEL = "precioustracker.intent.model";
+	private PreciousTrackerDbHelper dbHelper;
+	private LocalBroadcastManager broadcastManager;
 
 	protected PreciousTrackerModel(Context context) {
 		if (dbHelper == null) {
 			dbHelper = new PreciousTrackerDbHelper(context);
+			broadcastManager = LocalBroadcastManager.getInstance(context);
 		}
 	}
 
@@ -103,6 +113,16 @@ public class PreciousTrackerModel {
 		String[] whereArgs = { String.valueOf(newMove.getItemId()) };
 		long updateSuccessful = db.update(PreciousItemTable.TABLE_NAME, itemValues, whereClause, whereArgs);
 		return insertSuccessful & updateSuccessful;
+	}
+
+	public void broadcast(String intentMessage) {
+		Intent intent = new Intent(intentMessage);
+		broadcastManager.sendBroadcast(intent);
+	}
+
+	public void registerBroadcastReceiver(BroadcastReceiver receiver, String action) {
+		IntentFilter filter = new IntentFilter(action);
+		broadcastManager.registerReceiver(receiver, filter);
 	}
 
 }

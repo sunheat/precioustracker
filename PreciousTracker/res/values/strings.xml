@@ -8,6 +8,7 @@
     <string name="moves">Moves</string>
     <string name="photoLastMove">Photo of last movement</string>
     <string name="add">+</string>
+    <string name="refresh">Refresh</string>
     <string name="title_activity_display_move">Display move</string>
     <string name="itemName">Item Name</string>
     <string name="dateMoved">Date Moved</string>

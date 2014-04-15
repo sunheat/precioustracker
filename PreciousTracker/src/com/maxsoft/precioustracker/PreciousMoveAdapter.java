@@ -17,6 +17,7 @@ public class PreciousMoveAdapter extends BaseAdapter {
 	private Context context;
 
 	public PreciousMoveAdapter(ViewGroup parent, List<PreciousMove> data) {
+		super();
 		this.data = data;
 		this.context = parent.getContext();
 	}

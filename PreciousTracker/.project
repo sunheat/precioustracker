@@ -3,6 +3,8 @@
 	<name>PreciousTracker</name>
 	<comment></comment>
 	<projects>
+		<project>ActionBar-PullToRefresh</project>
+		<project>SmoothProgressBar</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

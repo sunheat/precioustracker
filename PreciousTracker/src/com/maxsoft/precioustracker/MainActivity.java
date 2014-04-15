@@ -15,8 +15,6 @@ import com.maxsoft.precioustracker.model.PreciousTrackerModel;
 
 public class MainActivity extends FragmentActivity {
 
-	public static final String INTENT_MSG_UPDATE = "intent.msg.update";
-
 	private PreciousTrackerModel model;
 
 	private PreciousTrackerPagerAdapter pagerAdapter;
@@ -72,16 +70,6 @@ public class MainActivity extends FragmentActivity {
 	}
 
 	@Override
-	protected void onStart() {
-		super.onStart();
-		Intent intent = getIntent();
-		if (intent != null && intent.getExtras() != null) {
-			boolean update = intent.getExtras().getBoolean(INTENT_MSG_UPDATE);
-			pagerAdapter.setUpdate(update);
-		}
-	}
-
-	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -101,8 +89,26 @@ public class MainActivity extends FragmentActivity {
 			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_ITEMS:
 				return true;
 			}
+		case R.id.refresh:
+			switch (viewPager.getCurrentItem()) {
+			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_MOVES:
+				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_MOVE_LIST);
+				return true;
+			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_ITEMS:
+				return true;
+			}
 		default:
 			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		switch (requestCode) {
+		case PreciousTrackerModel.REQ_CODE_ADD_MOVE:
+			if (resultCode == RESULT_OK) {
+				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_MOVE_LIST);
+			}
 		}
 	}
 
