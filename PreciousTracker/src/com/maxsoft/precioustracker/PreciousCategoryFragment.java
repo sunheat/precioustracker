@@ -7,19 +7,17 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.maxsoft.precioustracker.model.PreciousItem;
 import com.maxsoft.precioustracker.model.PreciousTrackerModel;
 
-public class PreciousItemsFragment extends Fragment {
+public class PreciousCategoryFragment extends Fragment {
 
-	private List<PreciousItem> itemList;
-	private ViewGroup parent;
+	private List<PreciousCategory> categoryList;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		this.parent = container;
-		return inflater.inflate(R.layout.item_list, null);
+		return inflater.inflate(R.layout.category_list, null);
 	}
 
 	@Override
@@ -31,10 +29,9 @@ public class PreciousItemsFragment extends Fragment {
 
 	private void refreshList() {
 		PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
-		itemList = model.getItemList();
-		PreciousItemAdapter adapter = new PreciousItemAdapter(itemList);
-		ListView listView = (ListView) parent.findViewById(R.id.itemListView);
+		categoryList = model.getCategoryList();
+		ArrayAdapter<PreciousCategory> adapter = new ArrayAdapter<PreciousCategory>(getActivity(), android.R.layout.simple_list_item_1, categoryList);
+		ListView listView = (ListView) getActivity().findViewById(R.id.lstCategory);
 		listView.setAdapter(adapter);
 	}
-
 }

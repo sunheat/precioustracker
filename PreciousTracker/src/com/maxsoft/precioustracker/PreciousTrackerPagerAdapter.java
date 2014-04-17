@@ -4,18 +4,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.maxsoft.precioustracker.model.PreciousTrackerModel;
-
 public class PreciousTrackerPagerAdapter extends FragmentPagerAdapter {
 
-	public static final int TAB_COUNT = 2;
+	public static final int TAB_COUNT = 3;
 	public static final int TAB_PRECIOUS_MOVES = 0;
 	public static final int TAB_PRECIOUS_ITEMS = 1;
+	public static final int TAB_PRECIOUS_CATEGORY = 2;
 
 	private PreciousMovesFragment movesFragment;
 	private PreciousItemsFragment itemsFragment;
+	private PreciousCategoryFragment categoryFragment;
 
-	public PreciousTrackerPagerAdapter(FragmentManager fm, PreciousTrackerModel model) {
+	public PreciousTrackerPagerAdapter(FragmentManager fm) {
 		super(fm);
 	}
 
@@ -32,6 +32,11 @@ public class PreciousTrackerPagerAdapter extends FragmentPagerAdapter {
 				itemsFragment = new PreciousItemsFragment();
 			}
 			return itemsFragment;
+		case TAB_PRECIOUS_CATEGORY:
+			if (categoryFragment == null) {
+				categoryFragment = new PreciousCategoryFragment();
+			}
+			return categoryFragment;
 		default:
 			return null;
 		}

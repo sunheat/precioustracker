@@ -15,16 +15,19 @@
     <string name="timeMoved">Time Moved</string>
     <string name="fromWhere">Moved From</string>
     <string name="toWhere">Moved To</string>
+    <string name="location">Location</string>
+    <string name="category">Category</string>
     <string name="lblSnapshot">Snapshot</string>
     <string name="descImgSnapshot">Snapshot for this move</string>
-    
+    <string name="createNewItem">Create a new item</string>
     <string name="title_activity_add_move">Add a move</string>
     <string name="ChooseDateHint">Click to select date</string>
     <string name="ChooseTimeHint">Click to select time</string>
     <string name="FromWhereHint">Original location</string>
     <string name="ToWhereHint">New location</string>
-    
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_create_item">CreateItemActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

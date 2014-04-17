@@ -14,11 +14,9 @@ import com.maxsoft.precioustracker.model.PreciousItem;
 public class PreciousItemAdapter extends BaseAdapter {
 
 	private List<PreciousItem> data;
-	private Context context;
 
-	public PreciousItemAdapter(ViewGroup parent, List<PreciousItem> data) {
+	public PreciousItemAdapter(List<PreciousItem> data) {
 		this.data = data;
-		this.context = parent.getContext();
 	}
 
 	@Override
@@ -39,8 +37,8 @@ public class PreciousItemAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		if (convertView == null) {
-			LayoutInflater inflator = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			convertView = inflator.inflate(R.layout.list_view_item_item, parent, false);
+			LayoutInflater inflator = (LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = inflator.inflate(R.layout.list_view_item_item, null, false);
 		}
 		TextView txtItemName = (TextView) convertView.findViewById(R.id.itemListTxtName);
 		TextView txtItemLoc = (TextView) convertView.findViewById(R.id.itemListTxtLoc);

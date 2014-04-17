@@ -32,9 +32,7 @@ public final class PreciousMovesFragment extends Fragment {
 		this.parent = container;
 		this.context = parent.getContext();
 
-		if (rootView == null) {
-			rootView = inflater.inflate(R.layout.recent_moves, container, false);
-		}
+		rootView = inflater.inflate(R.layout.recent_moves, null);
 
 		if (receiver == null) {
 			receiver = new RefreshMoveListBroadcastReceiver();
@@ -48,7 +46,7 @@ public final class PreciousMovesFragment extends Fragment {
 	private void refreshList() {
 		PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
 		recentMoveList = model.getRecentMoves();
-		movesListAdapter = new PreciousMoveAdapter(parent, recentMoveList);
+		movesListAdapter = new PreciousMoveAdapter(recentMoveList);
 		ListView movesListView = (ListView) parent.findViewById(R.id.movesListView);
 		movesListView.setAdapter(movesListAdapter);
 	}

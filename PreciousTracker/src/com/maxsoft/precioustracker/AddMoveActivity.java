@@ -60,6 +60,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 		}
 
 		itemList = model.getItemList();
+		itemList.add(getNewItem());
 		ArrayAdapter<PreciousItem> adapter = new ArrayAdapter<PreciousItem>(this, android.R.layout.simple_spinner_item, itemList);
 		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -77,6 +78,14 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 		String formattedTime = formatter.format(c.getTime());
 		EditText txtTimeMoved = (EditText) findViewById(R.id.txtTimeMoved);
 		txtTimeMoved.setText(formattedTime);
+	}
+
+	// return an item for the drop down list that can be used to create a new
+	// PreciousItem when clicked
+	private PreciousItem getNewItem() {
+		PreciousItem newItem = new PreciousItem();
+		newItem.setName(getResources().getString(R.string.createNewItem));
+		return newItem;
 	}
 
 	@Override
@@ -121,9 +130,19 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 		String fromWhere = ((TextView) findViewById(R.id.txtFromWhere)).getText().toString();
 		String toWhere = ((TextView) findViewById(R.id.txtToWhere)).getText().toString();
 		String dateString = ((TextView) findViewById(R.id.txtDateMoved)).getText().toString();
+		String timeString = ((TextView) findViewById(R.id.txtTimeMoved)).getText().toString();
 		Date dateMoved = null;
 		try {
 			dateMoved = SimpleDateFormat.getDateInstance().parse(dateString);
+			Calendar dateCalendar = Calendar.getInstance();
+			dateCalendar.setTime(dateMoved);
+			Date timeMoved = SimpleDateFormat.getTimeInstance().parse(timeString);
+			Calendar timeCalendar = Calendar.getInstance();
+			timeCalendar.setTime(timeMoved);
+			dateCalendar.set(Calendar.HOUR_OF_DAY, timeCalendar.get(Calendar.HOUR_OF_DAY));
+			dateCalendar.set(Calendar.MINUTE, timeCalendar.get(Calendar.MINUTE));
+			dateCalendar.set(Calendar.SECOND, timeCalendar.get(Calendar.SECOND));
+			dateMoved = dateCalendar.getTime();
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -179,8 +198,13 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		PreciousItem item = itemList.get(position);
-		getPreciousMove();
-		newMove.setItemId(item.get_id());
+		if (item.get_id() == PreciousTrackerModel.CREATE_NEW_ITEM_ID) {
+			Intent intent = new Intent();
+			startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_ITEM);
+		} else {
+			getPreciousMove();
+			newMove.setItemId(item.get_id());
+		}
 	}
 
 	@Override

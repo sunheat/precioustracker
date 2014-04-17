@@ -13,7 +13,7 @@ import android.view.MenuItem;
 
 import com.maxsoft.precioustracker.model.PreciousTrackerModel;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements TabListener {
 
 	private PreciousTrackerModel model;
 
@@ -27,7 +27,7 @@ public class MainActivity extends FragmentActivity {
 		setContentView(R.layout.activity_main);
 		model = PreciousTrackerModel.getInstance(this);
 
-		pagerAdapter = new PreciousTrackerPagerAdapter(getSupportFragmentManager(), model);
+		pagerAdapter = new PreciousTrackerPagerAdapter(getSupportFragmentManager());
 		viewPager = (ViewPager) findViewById(R.id.pager);
 		viewPager.setAdapter(pagerAdapter);
 		viewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -42,31 +42,10 @@ public class MainActivity extends FragmentActivity {
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
-		// adds tab listeners
-		TabListener tabListener = new TabListener() {
-
-			@Override
-			public void onTabUnselected(Tab tab, FragmentTransaction ft) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void onTabSelected(Tab tab, FragmentTransaction ft) {
-				viewPager.setCurrentItem(tab.getPosition());
-			}
-
-			@Override
-			public void onTabReselected(Tab tab, FragmentTransaction ft) {
-				// TODO Auto-generated method stub
-
-			}
-		};
-
 		// add tabs with listener
-		actionBar.addTab(actionBar.newTab().setText(R.string.moves).setTabListener(tabListener));
-		actionBar.addTab(actionBar.newTab().setText(R.string.items).setTabListener(tabListener));
-
+		actionBar.addTab(actionBar.newTab().setText(R.string.moves).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setText(R.string.items).setTabListener(this));
+		actionBar.addTab(actionBar.newTab().setText(R.string.category).setTabListener(this));
 	}
 
 	@Override
@@ -110,6 +89,21 @@ public class MainActivity extends FragmentActivity {
 				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_MOVE_LIST);
 			}
 		}
+	}
+
+	@Override
+	public void onTabSelected(Tab tab, FragmentTransaction ft) {
+		viewPager.setCurrentItem(tab.getPosition());
+	}
+
+	@Override
+	public void onTabUnselected(Tab tab, FragmentTransaction ft) {
+		// no logic here
+	}
+
+	@Override
+	public void onTabReselected(Tab tab, FragmentTransaction ft) {
+		// no logic here
 	}
 
 }

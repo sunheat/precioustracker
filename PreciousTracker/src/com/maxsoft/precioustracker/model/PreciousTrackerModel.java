@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.maxsoft.precioustracker.PreciousCategory;
 import com.maxsoft.precioustracker.model.PreciousCategoryTable.PreciousCategoryEntry;
 import com.maxsoft.precioustracker.model.PreciousItemTable.PreciousItemEntry;
 import com.maxsoft.precioustracker.model.PreciousMoveTable.PreciousMoveEntry;
@@ -27,7 +28,9 @@ public class PreciousTrackerModel {
 	public static final String INTENT_MSG_REFRESH_MOVE_LIST = "precioustracker.intent.refresh_move_list";
 	public static final String IMG_FORMAT_STRING = "yyyyMMdd_HHmmss";
 	public static final int LOADER_ID_MOVE_LIST = 6578;
-	
+	public static final long CREATE_NEW_ITEM_ID = -1;
+	public static final int REQ_CODE_CREATE_ITEM = 2486;
+
 	private static PreciousTrackerModel instance;
 
 	private PreciousTrackerDbHelper dbHelper;
@@ -112,7 +115,7 @@ public class PreciousTrackerModel {
 		String whereClause = PreciousItemEntry._ID + "=?";
 		String[] whereArgs = { String.valueOf(newMove.getItemId()) };
 		long updateSuccessful = db.update(PreciousItemTable.TABLE_NAME, itemValues, whereClause, whereArgs);
-		return insertSuccessful & updateSuccessful;
+		return insertSuccessful & updateSuccessful; //TODO change algorithm
 	}
 
 	public void broadcast(String intentMessage) {
@@ -125,4 +128,19 @@ public class PreciousTrackerModel {
 		broadcastManager.registerReceiver(receiver, filter);
 	}
 
+	public List<PreciousCategory> getCategoryList() {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		String[] columns = new String[] { PreciousCategoryEntry._ID, PreciousCategoryEntry.COLUMN_NAME_NAME };
+		Cursor c = db.query(PreciousCategoryTable.TABLE_NAME, columns, null, null, null, null, null, null);
+		List<PreciousCategory> result = new ArrayList<PreciousCategory>(c.getCount());
+		while (c.moveToNext()) {
+			PreciousCategory category = new PreciousCategory();
+			int idIdx = c.getColumnIndex(PreciousCategoryEntry._ID);
+			category.set_id(c.getLong(idIdx));
+			int nameIdx = c.getColumnIndex(PreciousCategoryEntry.COLUMN_NAME_NAME);
+			category.setName(c.getString(nameIdx));
+			result.add(category);
+		}
+		return result;
+	}
 }

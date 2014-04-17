@@ -34,6 +34,10 @@
             android:label="@string/title_activity_add_move"
             android:parentActivityName="com.maxsoft.precioustracker.MainActivity" >
         </activity>
+        <activity
+            android:name="com.maxsoft.precioustracker.CreateItemActivity"
+            android:label="@string/title_activity_create_item" >
+        </activity>
     </application>
 
 </manifest>
