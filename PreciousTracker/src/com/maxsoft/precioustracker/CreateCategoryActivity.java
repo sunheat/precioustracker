@@ -13,6 +13,12 @@ import android.widget.TextView;
 
 import com.maxsoft.precioustracker.model.PreciousTrackerModel;
 
+/**
+ * The CreateCategoryActivity used for creating category records.
+ * 
+ * @author Max
+ * 
+ */
 public class CreateCategoryActivity extends Activity {
 
 	private PreciousTrackerModel model;
@@ -27,6 +33,7 @@ public class CreateCategoryActivity extends Activity {
 			getFragmentManager().beginTransaction().add(R.id.container, new CreateCategoryFragment()).commit();
 		}
 
+		// enable up button in action bar
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 	}
@@ -60,12 +67,15 @@ public class CreateCategoryActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+	/** Handles cancel button click. */
 	public void onCancel(View v) {
 		finish();
 	}
 
+	/** Handles save button click. */
 	public void onSave(View v) {
-		getNewCategory();
+		// make sure newCategory isn't null
+		getPreciousCategory();
 		String categroyName = ((TextView) findViewById(R.id.txtCategoryName)).getText().toString();
 		newCategory.setName(categroyName);
 		model.insertNewCategory(newCategory);
@@ -78,16 +88,13 @@ public class CreateCategoryActivity extends Activity {
 	 * 
 	 * @return the PreciousCategory object representing the new database record
 	 */
-	private PreciousCategory getNewCategory() {
+	private PreciousCategory getPreciousCategory() {
 		if (newCategory == null) {
 			newCategory = new PreciousCategory();
 		}
 		return newCategory;
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
 	public static class CreateCategoryFragment extends Fragment {
 
 		public CreateCategoryFragment() {
