@@ -9,7 +9,8 @@ public class PreciousItem implements Serializable {
 	private static final long serialVersionUID = 0;
 	long _id;
 	private String name;
-	private String category;
+	private long categoryId;
+	private String categoryName;
 	private String location;
 	private String lastMoved;
 
@@ -21,12 +22,12 @@ public class PreciousItem implements Serializable {
 		this.name = name;
 	}
 
-	public String getCategory() {
-		return category;
+	public long getCategoryId() {
+		return categoryId;
 	}
 
-	public void setCategory(String category) {
-		this.category = category;
+	public void setCategoryId(long category) {
+		this.categoryId = category;
 	}
 
 	public String getLocation() {
@@ -56,6 +57,14 @@ public class PreciousItem implements Serializable {
 	@Override
 	public String toString() {
 		return name;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
 	}
 
 }

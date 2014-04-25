@@ -1,17 +1,36 @@
 package com.maxsoft.precioustracker;
 
-import android.app.Activity;
+import java.util.List;
+
 import android.app.ActionBar;
+import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.os.Build;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
+import android.widget.TextView;
 
-public class CreateItemActivity extends Activity {
+import com.maxsoft.precioustracker.model.PreciousItem;
+import com.maxsoft.precioustracker.model.PreciousTrackerModel;
+
+/**
+ * The CreateItemActivity used for creating item records.
+ * 
+ * @author Max
+ * 
+ */
+public class CreateItemActivity extends Activity implements OnItemSelectedListener {
+
+	private PreciousTrackerModel model;
+	private PreciousItem newItem;
+	private List<PreciousCategory> categoryList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -19,16 +38,69 @@ public class CreateItemActivity extends Activity {
 		setContentView(R.layout.activity_create_item);
 
 		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction().add(R.id.container, new PlaceholderFragment()).commit();
+			getFragmentManager().beginTransaction().add(R.id.container, new CreateItemFragment()).commit();
 		}
+
+		// enable up button in action bar
+		ActionBar actionBar = getActionBar();
+		actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	protected void onStart() {
+		super.onStart();
 
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.create_item, menu);
-		return true;
+		if (model == null) {
+			model = PreciousTrackerModel.getInstance(this);
+		}
+
+		populateCategoryList();
+	}
+
+	/**
+	 * Populates the category spinner.
+	 */
+	private void populateCategoryList() {
+		// get the category list from the database
+		categoryList = model.getCategoryList();
+		// add an item for triggering the new category creation activity
+		categoryList.add(getNewCategory());
+
+		// using ArrayAdapter to display spinner items
+		ArrayAdapter<PreciousCategory> adapter = new ArrayAdapter<PreciousCategory>(this, android.R.layout.simple_spinner_item, categoryList);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+		Spinner lstCategory = (Spinner) findViewById(R.id.lstCategory);
+		lstCategory.setAdapter(adapter);
+		lstCategory.setOnItemSelectedListener(this);
+	}
+
+	/**
+	 * Returns a category item for the spinner that can be used to trigger new
+	 * category creation.
+	 * 
+	 * @return
+	 */
+	private PreciousCategory getNewCategory() {
+		PreciousCategory newCategory = new PreciousCategory();
+		newCategory.setName(getResources().getString(R.string.createNewCategory));
+		// sets a special ID to represent an yet to be created new category
+		newCategory.set_id(PreciousTrackerModel.CREATE_NEW_CATEGORY_ID);
+		return newCategory;
+	}
+
+	/**
+	 * Initializes and returns the PreciousItem object that represents the
+	 * precious item database record to be created.
+	 * 
+	 * @return the PreciousItem object representing the precious item database
+	 *         record to be created
+	 */
+	private PreciousItem getPreciousItem() {
+		if (newItem == null) {
+			newItem = new PreciousItem();
+		}
+		return newItem;
 	}
 
 	@Override
@@ -43,12 +115,29 @@ public class CreateItemActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * A placeholder fragment containing a simple view.
-	 */
-	public static class PlaceholderFragment extends Fragment {
+	/** handles cancel button click */
+	public void onCancel(View v) {
+		finish();
+	}
 
-		public PlaceholderFragment() {
+	/** handles save button click */
+	public void onSave(View v) {
+		String itemName = ((TextView) findViewById(R.id.txtItemName)).getText().toString();
+		String itemLoc = ((TextView) findViewById(R.id.txtLocation)).getText().toString();
+
+		// make sure newItem isn't null
+		getPreciousItem();
+		newItem.setName(itemName);
+		newItem.setLocation(itemLoc);
+		model.insertNewItem(newItem);
+		setResult(RESULT_OK);
+
+		finish();
+	}
+
+	public static class CreateItemFragment extends Fragment {
+
+		public CreateItemFragment() {
 		}
 
 		@Override
@@ -56,6 +145,25 @@ public class CreateItemActivity extends Activity {
 			View rootView = inflater.inflate(R.layout.fragment_create_item, container, false);
 			return rootView;
 		}
+	}
+
+	@Override
+	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+		PreciousCategory category = categoryList.get(position);
+		if (category.get_id() == PreciousTrackerModel.CREATE_NEW_CATEGORY_ID) {
+			// special item selected. trigger the CreateCategoryActivity
+			Intent intent = new Intent(this, CreateCategoryActivity.class);
+			startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY);
+		} else {
+			// sets the selected category on the new PreciousItem object
+			getPreciousItem();
+			newItem.setCategoryId(category.get_id());
+		}
+	}
+
+	@Override
+	public void onNothingSelected(AdapterView<?> parent) {
+		// no logic here
 	}
 
 }

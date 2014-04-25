@@ -62,10 +62,16 @@ public class MainActivity extends FragmentActivity implements TabListener {
 		case R.id.add:
 			switch (viewPager.getCurrentItem()) {
 			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_MOVES:
-				Intent intent = new Intent(getBaseContext(), AddMoveActivity.class);
-				startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_ADD_MOVE);
+				Intent intentMove = new Intent(getBaseContext(), AddMoveActivity.class);
+				startActivityForResult(intentMove, PreciousTrackerModel.REQ_CODE_ADD_MOVE);
 				return true;
 			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_ITEMS:
+				Intent intentItem = new Intent(getBaseContext(), CreateItemActivity.class);
+				startActivityForResult(intentItem, PreciousTrackerModel.REQ_CODE_CREATE_ITEM);
+				return true;
+			case PreciousTrackerPagerAdapter.TAB_PRECIOUS_CATEGORY:
+				Intent intentCategory = new Intent(getBaseContext(), CreateCategoryActivity.class);
+				startActivityForResult(intentCategory, PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY);
 				return true;
 			}
 		case R.id.refresh:
@@ -83,10 +89,14 @@ public class MainActivity extends FragmentActivity implements TabListener {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case PreciousTrackerModel.REQ_CODE_ADD_MOVE:
-			if (resultCode == RESULT_OK) {
+		if (resultCode == RESULT_OK) {
+			switch (requestCode) {
+			case PreciousTrackerModel.REQ_CODE_ADD_MOVE:
 				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_MOVE_LIST);
+			case PreciousTrackerModel.REQ_CODE_CREATE_ITEM:
+				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_ITEM_LIST);
+			case PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY:
+				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_CATEGORY_LIST);
 			}
 		}
 	}

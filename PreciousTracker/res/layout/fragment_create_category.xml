@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="match_parent"
-    tools:context="com.maxsoft.precioustracker.CreateItemFragment" >
+    tools:context="com.maxsoft.precioustracker.CreateCategoryFragment" >
 
     <LinearLayout
         android:layout_width="fill_parent"
@@ -20,14 +20,14 @@
                 android:layout_height="wrap_content" >
 
                 <TextView
-                    android:id="@+id/lblItemName"
+                    android:id="@+id/lblCategoryName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/itemName"
+                    android:text="@string/categoryName"
                     android:textAppearance="@style/LabelTextBold" />
 
                 <EditText
-                    android:id="@+id/txtItemName"
+                    android:id="@+id/txtCategoryName"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -41,40 +41,12 @@
                 android:id="@+id/tableRow2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
-                <TextView
-                    android:id="@+id/lblLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/location"
-                    android:textAppearance="@style/LabelTextBold" />
-
-                <EditText
-                    android:id="@+id/txtLocation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:inputType="text" >
-                </EditText>
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" >
-
-                <TextView
-                    android:id="@+id/lblCategory"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/category"
-                    android:textAppearance="@style/LabelTextBold" />
-
-                <Spinner
-                    android:id="@+id/lstCategory"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1" />
             </TableRow>
 
             <TableRow

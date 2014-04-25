@@ -16,7 +16,7 @@ public final class PreciousMoveTable extends PreciousTrackerTables {
 	}
 
 	public static abstract class PreciousMoveEntry implements BaseColumns {
-		public static final String COLUMN_NAME_ITEM_ID = "itemId";
+		public static final String COLUMN_NAME_ITEM_ID = "item_id";
 		public static final String COLUMN_NAME_DATE = "date";
 		public static final String COLUMN_NAME_FROM = "from_where";
 		public static final String COLUMN_NAME_TO = "to_where";

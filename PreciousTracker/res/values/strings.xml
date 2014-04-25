@@ -20,6 +20,7 @@
     <string name="lblSnapshot">Snapshot</string>
     <string name="descImgSnapshot">Snapshot for this move</string>
     <string name="createNewItem">Create a new item</string>
+    <string name="createNewCategory">Create a new category</string>
     <string name="title_activity_add_move">Add a move</string>
     <string name="ChooseDateHint">Click to select date</string>
     <string name="ChooseTimeHint">Click to select time</string>
@@ -27,7 +28,8 @@
     <string name="ToWhereHint">New location</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
-    <string name="title_activity_create_item">CreateItemActivity</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_create_item">Create Item</string>
+    <string name="title_activity_create_category">Create Category</string>
+    <string name="categoryName">Category Name</string>
 
 </resources>

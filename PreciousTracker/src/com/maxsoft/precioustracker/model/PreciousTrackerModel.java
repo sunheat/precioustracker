@@ -26,10 +26,16 @@ public class PreciousTrackerModel {
 
 	public static final String INTENT_MSG_MODEL = "precioustracker.intent.model";
 	public static final String INTENT_MSG_REFRESH_MOVE_LIST = "precioustracker.intent.refresh_move_list";
+	public static final String INTENT_MSG_REFRESH_ITEM_LIST = "precioustracker.intent.refresh_item_list";
+	public static final String INTENT_MSG_REFRESH_CATEGORY_LIST = "precioustracker.intent.refresh_category_list";
 	public static final String IMG_FORMAT_STRING = "yyyyMMdd_HHmmss";
 	public static final int LOADER_ID_MOVE_LIST = 6578;
 	public static final long CREATE_NEW_ITEM_ID = -1;
+	public static final long CREATE_NEW_CATEGORY_ID = -1;
 	public static final int REQ_CODE_CREATE_ITEM = 2486;
+	public static final int REQ_CODE_CREATE_CATEGORY = 2483;
+
+	public static final String EXTRA_KEY_NEW_ITEM_ID = "precioustacker.extras.new_item_id";
 
 	private static PreciousTrackerModel instance;
 
@@ -65,8 +71,10 @@ public class PreciousTrackerModel {
 			item.setLocation(c.getString(locIdx));
 			int dateIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_DATETIME);
 			item.setLastMoved(c.getString(dateIdx));
-			int catIdx = c.getColumnIndex(PreciousCategoryEntry.COLUMN_NAME_NAME);
-			item.setCategory(c.getString(catIdx));
+			int catNameIdx = c.getColumnIndex(PreciousCategoryEntry.COLUMN_NAME_NAME);
+			item.setCategoryName(c.getString(catNameIdx));
+			int catIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID);
+			item.setCategoryId(c.getLong(catIdx));
 			results.add(item);
 		}
 		return results;
@@ -115,7 +123,7 @@ public class PreciousTrackerModel {
 		String whereClause = PreciousItemEntry._ID + "=?";
 		String[] whereArgs = { String.valueOf(newMove.getItemId()) };
 		long updateSuccessful = db.update(PreciousItemTable.TABLE_NAME, itemValues, whereClause, whereArgs);
-		return insertSuccessful & updateSuccessful; //TODO change algorithm
+		return insertSuccessful & updateSuccessful; // TODO change algorithm
 	}
 
 	public void broadcast(String intentMessage) {
@@ -143,4 +151,21 @@ public class PreciousTrackerModel {
 		}
 		return result;
 	}
+
+	public long insertNewCategory(PreciousCategory newCategory) {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues categoryValues = new ContentValues();
+		categoryValues.put(PreciousCategoryEntry.COLUMN_NAME_NAME, newCategory.getName());
+		return db.insert(PreciousCategoryTable.TABLE_NAME, null, categoryValues);
+	}
+
+	public long insertNewItem(PreciousItem newItem) {
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+		ContentValues values = new ContentValues();
+		values.put(PreciousItemEntry.COLUMN_NAME_NAME, newItem.getName());
+		values.put(PreciousItemEntry.COLUMN_NAME_LOC, newItem.getLocation());
+		values.put(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID, newItem.getCategoryId());
+		values.put(PreciousItemEntry.COLUMN_NAME_DATETIME, new Date().getTime());
+		return db.insert(PreciousItemTable.TABLE_NAME, null, values);
+    }
 }

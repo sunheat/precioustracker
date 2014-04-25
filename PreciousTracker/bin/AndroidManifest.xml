@@ -38,6 +38,10 @@
             android:name="com.maxsoft.precioustracker.CreateItemActivity"
             android:label="@string/title_activity_create_item" >
         </activity>
+        <activity
+            android:name="com.maxsoft.precioustracker.CreateCategoryActivity"
+            android:label="@string/title_activity_create_category" >
+        </activity>
     </application>
 
 </manifest>
