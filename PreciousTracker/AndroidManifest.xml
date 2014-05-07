@@ -30,6 +30,11 @@
             android:parentActivityName="com.maxsoft.precioustracker.MainActivity" >
         </activity>
         <activity
+            android:name="com.maxsoft.precioustracker.DisplayItemActivity"
+            android:label="@string/title_activity_display_item"
+            android:parentActivityName="com.maxsoft.precioustracker.MainActivity" >
+        </activity>
+        <activity
             android:name="com.maxsoft.precioustracker.AddMoveActivity"
             android:label="@string/title_activity_add_move"
             android:parentActivityName="com.maxsoft.precioustracker.MainActivity" >

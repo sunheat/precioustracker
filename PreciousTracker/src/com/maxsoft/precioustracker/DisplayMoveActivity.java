@@ -15,8 +15,14 @@ import android.widget.TextView;
 
 import com.maxsoft.precioustracker.model.PreciousMove;
 
+/**
+ * DisplayMoveActivity for displaying details of an item move record.
+ * 
+ * @author Max
+ */
 public class DisplayMoveActivity extends Activity {
 
+	// the PreciousMove to be displayed
 	private PreciousMove move;
 
 	@Override
@@ -24,26 +30,34 @@ public class DisplayMoveActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_display_move);
 
+		// setting up the back function in the action bar
 		ActionBar actionBar = getActionBar();
 		actionBar.setDisplayHomeAsUpEnabled(true);
 	}
 
 	protected void onStart() {
 		super.onStart();
-		Intent intent = getIntent();
+
 		TextView txtItemName = (TextView) findViewById(R.id.txtItemName);
 		TextView txtDateMoved = (TextView) findViewById(R.id.txtDateMoved);
 		TextView txtFromWhere = (TextView) findViewById(R.id.txtFromWhere);
 		TextView txtToWhere = (TextView) findViewById(R.id.txtToWhere);
 		ImageView imgSnapshot = (ImageView) findViewById(R.id.imgSnapshot);
+
+		// retrieve the PreciousMove object to be displayed from the intent
+		Intent intent = getIntent();
 		move = (PreciousMove) intent.getSerializableExtra(PreciousMove.INTENT_MESSAGE);
+
 		txtItemName.setText(move.getItemName());
+
 		// format the date
 		Date dateMoved = move.getDateMoved();
 		String formatedDate = SimpleDateFormat.getDateTimeInstance().format(dateMoved);
+
 		txtDateMoved.setText(formatedDate);
 		txtFromWhere.setText(move.getFromWhere());
 		txtToWhere.setText(move.getToWhere());
+		// get the snapshot file path
 		String snapshotFilePath = move.getSnapshot();
 		if (snapshotFilePath != null) {
 			File file = new File(snapshotFilePath);

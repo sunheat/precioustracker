@@ -9,7 +9,8 @@
     <string name="photoLastMove">Photo of last movement</string>
     <string name="add">+</string>
     <string name="refresh">Refresh</string>
-    <string name="title_activity_display_move">Display move</string>
+    <string name="title_activity_display_move">Item move details</string>
+    <string name="title_activity_display_item">Item details</string>
     <string name="itemName">Item Name</string>
     <string name="dateMoved">Date Moved</string>
     <string name="timeMoved">Time Moved</string>
@@ -31,5 +32,7 @@
     <string name="title_activity_create_item">Create Item</string>
     <string name="title_activity_create_category">Create Category</string>
     <string name="categoryName">Category Name</string>
+    <string name="descImgItemPhoto">Photo of item</string>
+    <string name="dateCreated">Date created</string>
 
 </resources>
