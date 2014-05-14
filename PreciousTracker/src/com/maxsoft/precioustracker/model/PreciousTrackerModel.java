@@ -65,16 +65,20 @@ public class PreciousTrackerModel {
 			PreciousItem item = new PreciousItem();
 			int idIdx = c.getColumnIndex(PreciousItemEntry._ID);
 			item._id = c.getLong(idIdx);
-			int nameIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_NAME);
+			int nameIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_ITEM_NAME);
 			item.setName(c.getString(nameIdx));
 			int locIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_LOC);
 			item.setLocation(c.getString(locIdx));
-			int dateIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_DATETIME);
-			item.setLastMoved(c.getString(dateIdx));
+			int lastMovedIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_LAST_MOVED);
+			item.setLastMoved(c.getString(lastMovedIdx));
 			int catNameIdx = c.getColumnIndex(PreciousCategoryEntry.COLUMN_NAME_NAME);
 			item.setCategoryName(c.getString(catNameIdx));
 			int catIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID);
 			item.setCategoryId(c.getLong(catIdx));
+			int dateCreatedIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_DATE_CREATED);
+			item.setDateCreated(new Date(c.getLong(dateCreatedIdx)));
+			int photoIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_PHOTO);
+			item.setPhotoFilePath(c.getString(photoIdx));
 			results.add(item);
 		}
 		return results;
@@ -91,7 +95,7 @@ public class PreciousTrackerModel {
 			listItem._id = c.getLong(idIdx);
 			int itemIdIdx = c.getColumnIndex(PreciousMoveEntry.COLUMN_NAME_ITEM_ID);
 			listItem.itemId = c.getLong(itemIdIdx);
-			int itemNameIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_NAME);
+			int itemNameIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_ITEM_NAME);
 			listItem.itemName = c.getString(itemNameIdx);
 			int dateMovedIndx = c.getColumnIndex(PreciousMoveEntry.COLUMN_NAME_DATE);
 			long dateMoved = c.getLong(dateMovedIndx);
@@ -162,10 +166,10 @@ public class PreciousTrackerModel {
 	public long insertNewItem(PreciousItem newItem) {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(PreciousItemEntry.COLUMN_NAME_NAME, newItem.getName());
+		values.put(PreciousItemEntry.COLUMN_NAME_ITEM_NAME, newItem.getName());
 		values.put(PreciousItemEntry.COLUMN_NAME_LOC, newItem.getLocation());
 		values.put(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID, newItem.getCategoryId());
-		values.put(PreciousItemEntry.COLUMN_NAME_DATETIME, new Date().getTime());
+		values.put(PreciousItemEntry.COLUMN_NAME_LAST_MOVED, new Date().getTime());
 		return db.insert(PreciousItemTable.TABLE_NAME, null, values);
-    }
+	}
 }

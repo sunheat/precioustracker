@@ -15,12 +15,13 @@ public class PreciousTrackerDbHelper extends SQLiteOpenHelper {
 	public static final String DATABASE_NAME = "PreciousTracker.db";
 	public static final String MOVE_QUERY = "SELECT move." + PreciousMoveEntry._ID + "," + PreciousMoveEntry.COLUMN_NAME_DATE + ","
 	        + PreciousMoveEntry.COLUMN_NAME_FROM + "," + PreciousMoveEntry.COLUMN_NAME_TO + "," + PreciousMoveEntry.COLUMN_NAME_ITEM_ID + ","
-	        + PreciousMoveEntry.COLUMN_SNAPSHOT + "," + PreciousItemEntry.COLUMN_NAME_NAME + " FROM " + PreciousMoveTable.TABLE_NAME + " as move JOIN "
+	        + PreciousMoveEntry.COLUMN_SNAPSHOT + "," + PreciousItemEntry.COLUMN_NAME_ITEM_NAME + " FROM " + PreciousMoveTable.TABLE_NAME + " as move JOIN "
 	        + PreciousItemTable.TABLE_NAME + " as item ON item." + PreciousItemEntry._ID + "=move." + PreciousMoveEntry.COLUMN_NAME_ITEM_ID;
-	public static final String ITEM_QUERY = "SELECT item." + PreciousItemEntry._ID + ",item." + PreciousItemEntry.COLUMN_NAME_NAME + ",item."
-	        + PreciousItemEntry.COLUMN_NAME_LOC + ",item." + PreciousItemEntry.COLUMN_NAME_DATETIME + ",cat." + PreciousCategoryEntry.COLUMN_NAME_NAME
-	        + ",item." + PreciousItemEntry.COLUMN_NAME_CATEGORY_ID + " FROM " + PreciousItemTable.TABLE_NAME + " as item JOIN "
-	        + PreciousCategoryTable.TABLE_NAME + " as cat ON cat." + PreciousCategoryEntry._ID + " =item." + PreciousItemEntry.COLUMN_NAME_CATEGORY_ID;
+	public static final String ITEM_QUERY = "SELECT item." + PreciousItemEntry._ID + ",item." + PreciousItemEntry.COLUMN_NAME_ITEM_NAME + ",item."
+	        + PreciousItemEntry.COLUMN_NAME_LOC + ",item." + PreciousItemEntry.COLUMN_NAME_LAST_MOVED + ",cat." + PreciousCategoryEntry.COLUMN_NAME_NAME
+	        + ",item." + PreciousItemEntry.COLUMN_NAME_CATEGORY_ID + ",item." + PreciousItemEntry.COLUMN_NAME_DATE_CREATED + ",item."
+	        + PreciousItemEntry.COLUMN_NAME_PHOTO + " FROM " + PreciousItemTable.TABLE_NAME + " as item JOIN " + PreciousCategoryTable.TABLE_NAME
+	        + " as cat ON cat." + PreciousCategoryEntry._ID + " =item." + PreciousItemEntry.COLUMN_NAME_CATEGORY_ID;
 
 	public PreciousTrackerDbHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -50,17 +51,19 @@ public class PreciousTrackerDbHelper extends SQLiteOpenHelper {
 		long catId = db.insert(PreciousCategoryTable.TABLE_NAME, null, catValues);
 
 		ContentValues itemValues = new ContentValues();
-		itemValues.put(PreciousItemEntry.COLUMN_NAME_NAME, "GP AA rechargable");
+		itemValues.put(PreciousItemEntry.COLUMN_NAME_ITEM_NAME, "GP AA rechargable");
 		itemValues.put(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID, catId);
 		itemValues.put(PreciousItemEntry.COLUMN_NAME_LOC, "clock");
-		itemValues.put(PreciousItemEntry.COLUMN_NAME_DATETIME, System.currentTimeMillis());
+		itemValues.put(PreciousItemEntry.COLUMN_NAME_LAST_MOVED, System.currentTimeMillis());
+		itemValues.put(PreciousItemEntry.COLUMN_NAME_DATE_CREATED, System.currentTimeMillis());
 		long itemId = db.insert(PreciousItemTable.TABLE_NAME, null, itemValues);
 
 		ContentValues itemValues2 = new ContentValues();
-		itemValues2.put(PreciousItemEntry.COLUMN_NAME_NAME, "Sanyo AAA rechargable");
+		itemValues2.put(PreciousItemEntry.COLUMN_NAME_ITEM_NAME, "Sanyo AAA rechargable");
 		itemValues2.put(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID, catId);
 		itemValues2.put(PreciousItemEntry.COLUMN_NAME_LOC, "toy");
-		itemValues2.put(PreciousItemEntry.COLUMN_NAME_DATETIME, System.currentTimeMillis());
+		itemValues2.put(PreciousItemEntry.COLUMN_NAME_LAST_MOVED, System.currentTimeMillis());
+		itemValues2.put(PreciousItemEntry.COLUMN_NAME_DATE_CREATED, System.currentTimeMillis());
 		long itemId2 = db.insert(PreciousItemTable.TABLE_NAME, null, itemValues2);
 
 		ContentValues moveValues = new ContentValues();

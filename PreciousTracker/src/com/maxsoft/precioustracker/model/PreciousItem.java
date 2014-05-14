@@ -1,6 +1,7 @@
 package com.maxsoft.precioustracker.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class PreciousItem implements Serializable {
 
@@ -13,6 +14,8 @@ public class PreciousItem implements Serializable {
 	private String categoryName;
 	private String location;
 	private String lastMoved;
+	private Date dateCreated;
+	private String photoFilePath;
 
 	public String getName() {
 		return name;
@@ -65,6 +68,22 @@ public class PreciousItem implements Serializable {
 
 	public void setCategoryName(String categoryName) {
 		this.categoryName = categoryName;
+	}
+
+	public Date getDateCreated() {
+		return dateCreated;
+	}
+
+	public void setDateCreated(Date dateCreated) {
+		this.dateCreated = dateCreated;
+	}
+
+	public String getPhotoFilePath() {
+		return photoFilePath;
+	}
+
+	public void setPhotoFilePath(String photoFilePath) {
+		this.photoFilePath = photoFilePath;
 	}
 
 }
