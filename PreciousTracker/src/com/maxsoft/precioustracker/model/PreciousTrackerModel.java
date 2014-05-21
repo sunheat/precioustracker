@@ -36,6 +36,7 @@ public class PreciousTrackerModel {
 	public static final int REQ_CODE_CREATE_CATEGORY = 2483;
 
 	public static final String EXTRA_KEY_NEW_ITEM_ID = "precioustacker.extras.new_item_id";
+    public static final String EXTRA_PHOTO_FILE_PATH = "showPhotoIntent";
 
 	private static PreciousTrackerModel instance;
 

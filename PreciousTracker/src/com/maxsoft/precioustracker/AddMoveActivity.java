@@ -131,6 +131,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 
 				newMove.setSnapshot(snapshotPath);
 			}
+			break;
 		case PreciousTrackerModel.REQ_CODE_CREATE_ITEM:
 			if (resultCode == RESULT_OK) {
 				// make sure the item object isn't null
@@ -143,6 +144,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 				// refreshes the item list
 				populateItemList();
 			}
+			break;
 		}
 	}
 

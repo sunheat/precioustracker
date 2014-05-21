@@ -21,7 +21,6 @@ public final class PreciousMovesFragment extends Fragment {
 
 	private List<PreciousMove> recentMoveList;
 	private PreciousMoveAdapter movesListAdapter;
-	private ViewGroup parent;
 	private View rootView;
 	private Context context;
 	private RefreshMoveListBroadcastReceiver receiver;
@@ -29,8 +28,7 @@ public final class PreciousMovesFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
 
-		this.parent = container;
-		this.context = parent.getContext();
+		this.context = container.getContext();
 
 		rootView = inflater.inflate(R.layout.recent_moves, null);
 
@@ -47,7 +45,7 @@ public final class PreciousMovesFragment extends Fragment {
 		PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
 		recentMoveList = model.getRecentMoves();
 		movesListAdapter = new PreciousMoveAdapter(recentMoveList);
-		ListView movesListView = (ListView) parent.findViewById(R.id.movesListView);
+		ListView movesListView = (ListView) getActivity().findViewById(R.id.movesListView);
 		movesListView.setAdapter(movesListAdapter);
 	}
 
@@ -64,7 +62,7 @@ public final class PreciousMovesFragment extends Fragment {
 
 		refreshList();
 
-		ListView movesListView = (ListView) parent.findViewById(R.id.movesListView);
+		ListView movesListView = (ListView) getActivity().findViewById(R.id.movesListView);
 		movesListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long rowId) {

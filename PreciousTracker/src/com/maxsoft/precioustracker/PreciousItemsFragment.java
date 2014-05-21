@@ -20,12 +20,9 @@ import com.maxsoft.precioustracker.model.PreciousTrackerModel;
 public class PreciousItemsFragment extends Fragment {
 
 	private List<PreciousItem> itemList;
-	private ViewGroup parent;
 	private PreciousItemListBroadcastReceiver receiver;
 
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		this.parent = container;
-
 		if (receiver == null) {
 			receiver = new PreciousItemListBroadcastReceiver();
 			PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
@@ -42,7 +39,7 @@ public class PreciousItemsFragment extends Fragment {
 		refreshList();
 
 		// add the item click listener
-		ListView itemListView = (ListView) parent.findViewById(R.id.itemListView);
+		ListView itemListView = (ListView) getActivity().findViewById(R.id.itemListView);
 		itemListView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position, long rowId) {
@@ -52,7 +49,7 @@ public class PreciousItemsFragment extends Fragment {
 	}
 
 	private void onItemClick(int position) {
-		Intent intent = new Intent(parent.getContext(), DisplayItemActivity.class);
+		Intent intent = new Intent(getActivity().getBaseContext(), DisplayItemActivity.class);
 		PreciousItem item = itemList.get(position);
 		intent.putExtra(PreciousItem.INTENT_MESSAGE, item);
 		startActivity(intent);
@@ -62,7 +59,7 @@ public class PreciousItemsFragment extends Fragment {
 		PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
 		itemList = model.getItemList();
 		PreciousItemAdapter adapter = new PreciousItemAdapter(itemList);
-		ListView listView = (ListView) parent.findViewById(R.id.itemListView);
+		ListView listView = (ListView) getActivity().findViewById(R.id.itemListView);
 		listView.setAdapter(adapter);
 	}
 

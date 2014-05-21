@@ -5,8 +5,9 @@
 
     <ImageView
         android:id="@+id/movesListImg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:scaleType="centerInside"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:contentDescription="@string/photoLastMove"
@@ -16,8 +17,8 @@
         android:id="@+id/movesListTxtItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="23dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="@dimen/element_margin"
+        android:layout_marginTop="@dimen/element_margin"
         android:layout_toRightOf="@+id/movesListImg"
         android:textSize="16sp" />
 
@@ -25,6 +26,7 @@
         android:id="@+id/movesListTxtLoc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/element_margin"
         android:layout_alignBottom="@+id/movesListImg"
         android:layout_alignLeft="@+id/movesListTxtItem" />
 
