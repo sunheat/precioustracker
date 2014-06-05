@@ -9,7 +9,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:contentDescription="@string/descImgItemPhoto"
-        android:src="@drawable/ic_action_photo" />
+        android:src="@drawable/ic_action_photo"
+        android:onClick="onPhotoClicked" />
 
     <TableLayout
         android:layout_width="fill_parent"
@@ -113,31 +114,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/element_margin"
                 android:text="" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRow5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/element_margin"
-            android:paddingLeft="@dimen/element_margin"
-            android:paddingRight="@dimen/element_margin"
-            android:paddingTop="@dimen/element_margin" >
-
-            <TextView
-                android:id="@+id/lblSnapshot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="@dimen/element_margin"
-                android:text="@string/lblSnapshot"
-                android:textAppearance="@style/LabelTextBold" />
-
-            <ImageView
-                android:id="@+id/imgSnapshot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/descImgSnapshot"
-                android:src="@drawable/ic_action_photo" />
         </TableRow>
     </TableLayout>
 

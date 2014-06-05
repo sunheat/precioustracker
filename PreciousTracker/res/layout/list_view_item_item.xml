@@ -2,22 +2,23 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-    
-        <ImageView
+
+    <ImageView
         android:id="@+id/itemListImg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:contentDescription="@string/photoLastMove"
+        android:scaleType="centerInside"
         android:src="@drawable/ic_launcher" />
 
     <TextView
         android:id="@+id/itemListTxtName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="23dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginLeft="@dimen/element_margin"
+        android:layout_marginTop="@dimen/element_margin"
         android:layout_toRightOf="@+id/itemListImg"
         android:textSize="16sp" />
 
@@ -26,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/itemListImg"
-        android:layout_alignLeft="@+id/itemListTxtName" />
-    
+        android:layout_alignLeft="@+id/itemListTxtName"
+        android:layout_marginBottom="@dimen/element_margin" />
 
 </RelativeLayout>

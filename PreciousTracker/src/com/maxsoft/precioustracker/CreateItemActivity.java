@@ -1,12 +1,15 @@
 package com.maxsoft.precioustracker;
 
+import java.io.File;
 import java.util.List;
 
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -165,5 +169,56 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 	public void onNothingSelected(AdapterView<?> parent) {
 		// no logic here
 	}
+	
+	/**
+     * Handles portrait taking action.
+     * 
+     * @param v
+     */
+    public void onTakePortrait(View v) {
+        String portraitFilePath = model.getOutputMediaFilePath();
+        getPreciousItem().setPhotoFilePath(portraitFilePath);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File file = new File(portraitFilePath);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
+        startActivityForResult(intent, PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+        // respond to image capture results
+        case PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+            if (resultCode == RESULT_OK) {
+                // make sure the item object isn't null
+                getPreciousItem();
+
+                // prepare the Uri object to use with ImageView
+                String photoFilePath = newItem.getPhotoFilePath();
+                File file = new File(photoFilePath);
+                Uri imageUri = Uri.fromFile(file);
+
+                ImageView imgPortrait = (ImageView) findViewById(R.id.imgPortrait);
+                imgPortrait.setImageURI(imageUri);
+
+                newItem.setPhotoFilePath(photoFilePath);
+            }
+            break;
+        // respond to new category creation results
+        case PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY:
+            if (resultCode == RESULT_OK) {
+                // make sure the item object isn't null
+                getPreciousItem();
+                // get the newly created item ID from intent's extras
+                Bundle extras = data.getExtras();
+                long categoryId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID);
+                newItem.setCategoryId(categoryId);
+
+                // refreshes the item list
+                populateCategoryList();
+            }
+            break;
+        }
+    }
 
 }

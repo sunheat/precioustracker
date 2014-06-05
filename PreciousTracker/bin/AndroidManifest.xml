@@ -47,6 +47,20 @@
             android:name="com.maxsoft.precioustracker.CreateCategoryActivity"
             android:label="@string/title_activity_create_category" >
         </activity>
+        <activity
+            android:name="com.maxsoft.precioustracker.DisplayCategoryActivity"
+            android:label="@string/title_activity_display_category"
+            android:parentActivityName="com.maxsoft.precioustracker.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.maxsoft.precioustracker.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.maxsoft.precioustracker.ShowPhotoActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_show_photo"
+            android:theme="@style/FullscreenTheme" >
+        </activity>
     </application>
 
 </manifest>

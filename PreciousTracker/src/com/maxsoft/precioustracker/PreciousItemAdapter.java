@@ -1,12 +1,15 @@
 package com.maxsoft.precioustracker;
 
+import java.io.File;
 import java.util.List;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.maxsoft.precioustracker.model.PreciousItem;
@@ -41,9 +44,15 @@ public class PreciousItemAdapter extends BaseAdapter {
         convertView = inflator.inflate(R.layout.list_view_item_item, null, false);
         TextView txtItemName = (TextView) convertView.findViewById(R.id.itemListTxtName);
         TextView txtItemLoc = (TextView) convertView.findViewById(R.id.itemListTxtLoc);
+
         PreciousItem item = data.get(position);
         txtItemName.setText(item.getName());
         txtItemLoc.setText(item.getLocation());
+        String photoFilePath = item.getPhotoFilePath();
+        if (photoFilePath != null) {
+            ImageView imgPortrait = (ImageView) convertView.findViewById(R.id.itemListImg);
+            imgPortrait.setImageURI(Uri.fromFile(new File(photoFilePath)));
+        }
         return convertView;
     }
 
