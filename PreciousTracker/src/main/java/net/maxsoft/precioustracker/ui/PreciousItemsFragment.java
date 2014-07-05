@@ -49,8 +49,8 @@ public class PreciousItemsFragment extends Fragment {
 	}
 
 	private void onItemClick(int position) {
+	    PreciousItem item = itemList.get(position);
 		Intent intent = new Intent(getActivity().getBaseContext(), DisplayItemActivity.class);
-		PreciousItem item = itemList.get(position);
 		intent.putExtra(PreciousItem.INTENT_MESSAGE, item);
 		startActivity(intent);
 	}

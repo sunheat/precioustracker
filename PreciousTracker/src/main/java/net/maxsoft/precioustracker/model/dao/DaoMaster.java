@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import de.greenrobot.dao.AbstractDaoMaster;
 import de.greenrobot.dao.identityscope.IdentityScopeType;
+
 import net.maxsoft.precioustracker.model.dao.PreciousCategoryDao;
 import net.maxsoft.precioustracker.model.dao.PreciousItemDao;
 import net.maxsoft.precioustracker.model.dao.PreciousMoveDao;

@@ -137,7 +137,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
                 // get the newly created item ID from intent's extras
                 Bundle extras = data.getExtras();
                 long itemId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_ITEM_ID);
-                newMove.setItemId(itemId);
+                newMove.setItem(itemId);
 
                 // refreshes the item list
                 populateItemList();
@@ -240,7 +240,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
         } else {
             // set the selected item to the new move record
             getPreciousMove();
-            newMove.setItemId(item.getId());
+            newMove.setItem(item.getId());
         }
     }
 

@@ -162,7 +162,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 		} else {
 			// sets the selected category on the new PreciousItem object
 			getPreciousItem();
-			newItem.setCategoryId(category.getId());
+			newItem.setCategory(category.getId());
 		}
 	}
 
@@ -213,7 +213,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
                 // get the newly created item ID from intent's extras
                 Bundle extras = data.getExtras();
                 long categoryId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID);
-                newItem.setCategoryId(categoryId);
+                newItem.setCategory(categoryId);
 
                 // refreshes the item list
                 populateCategoryList();

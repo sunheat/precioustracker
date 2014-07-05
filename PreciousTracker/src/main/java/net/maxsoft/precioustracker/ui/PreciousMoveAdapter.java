@@ -50,7 +50,7 @@ public class PreciousMoveAdapter extends BaseAdapter {
         ImageView imgSnapshot = (ImageView) convertView.findViewById(R.id.movesListImg);
 
         PreciousMove item = data.get(position);
-        // TODO txtItemName.setText(item.getItemName());
+        txtItemName.setText(item.getPreciousItem().getName());
         txtItemLoc.setText(item.getToWhere());
         // set the snapshot image if not null
         String snapshotFilePath = item.getSnapshotFilePath();

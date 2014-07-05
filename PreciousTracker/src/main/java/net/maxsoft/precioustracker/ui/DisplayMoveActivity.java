@@ -50,7 +50,7 @@ public class DisplayMoveActivity extends Activity {
         Intent intent = getIntent();
         move = (PreciousMove) intent.getSerializableExtra(PreciousMove.INTENT_MESSAGE);
 
-        // TODO txtItemName.setText(move.getItemName());
+        txtItemName.setText(move.getPreciousItem().getName());
 
         // format the date
         Date dateMoved = move.getDateMoved();

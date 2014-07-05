@@ -6,6 +6,7 @@ import java.util.Date;
 
 import net.maxsoft.precioustracker.R;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousCategory;
 import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import android.app.ActionBar;
 import android.app.Activity;
@@ -21,11 +22,14 @@ public class DisplayItemActivity extends Activity {
 
     // the item to display
     private PreciousItem item;
+    private PreciousTrackerModel model;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_item);
+        
+        model = PreciousTrackerModel.getInstance(getParent());
 
         // set up back button on action bar
         ActionBar actionBar = getActionBar();
@@ -45,9 +49,11 @@ public class DisplayItemActivity extends Activity {
         // get the item object from intent extras
         Intent intent = getIntent();
         item = (PreciousItem) intent.getSerializableExtra(PreciousItem.INTENT_MESSAGE);
+        Long catId = item.getCategory();
+        PreciousCategory category = model.getCategory(catId);
 
         txtItemName.setText(item.getName());
-        // TODO txtCategory.setText(item.getCategoryName());
+        txtCategory.setText(category.getName());
         txtLocation.setText(item.getLocation());
 
         // format the date

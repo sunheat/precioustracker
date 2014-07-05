@@ -39,6 +39,11 @@ public class PreciousTrackerDbHelper extends SQLiteOpenHelper {
         DaoMaster master = new DaoMaster(db);
         DaoSession session = master.newSession();
         
+        // clear the database first
+        session.deleteAll(PreciousMove.class);
+        session.deleteAll(PreciousItem.class);
+        session.deleteAll(PreciousCategory.class);
+        
         // PreciousCategory
         PreciousCategory cat1 = new PreciousCategory(null, "Electronics");
         PreciousCategoryDao catDao = session.getPreciousCategoryDao();

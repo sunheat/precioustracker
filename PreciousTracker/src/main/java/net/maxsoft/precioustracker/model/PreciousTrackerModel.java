@@ -1,21 +1,21 @@
 package net.maxsoft.precioustracker.model;
 
-import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.*;
+import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.DATABASE_NAME;
+import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.generateSampleData;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
-import de.greenrobot.dao.AbstractDao;
-import de.greenrobot.dao.query.LazyList;
-import de.greenrobot.dao.query.QueryBuilder;
 import net.maxsoft.precioustracker.model.dao.DaoMaster;
+import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
 import net.maxsoft.precioustracker.model.dao.DaoSession;
 import net.maxsoft.precioustracker.model.dao.PreciousCategory;
+import net.maxsoft.precioustracker.model.dao.PreciousCategoryDao;
 import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import net.maxsoft.precioustracker.model.dao.PreciousMove;
-import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -25,6 +25,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.query.LazyList;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
+import de.greenrobot.dao.query.WhereCondition;
 
 public class PreciousTrackerModel {
 
@@ -170,5 +175,20 @@ public class PreciousTrackerModel {
             // TODO location of snapshot using internal storage
             return null;
         }
+    }
+
+    public PreciousCategory getCategory(Long catId) {
+        WhereCondition condition = PreciousCategoryDao.Properties.Id.eq(catId);
+        List<PreciousCategory> list = getRecord(PreciousCategory.class, condition);
+        return list.get(0);
+    }
+
+    private <T> List<T> getRecord(Class<T> clz, WhereCondition condition) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        DaoMaster master = new DaoMaster(db);
+        DaoSession session = master.newSession();
+        QueryBuilder<T> qb = session.queryBuilder(clz);
+        Query<T> query = qb.where(condition).build();
+        return query.list();
     }
 }
