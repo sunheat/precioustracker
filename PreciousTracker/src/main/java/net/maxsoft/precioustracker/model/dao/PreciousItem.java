@@ -1,6 +1,8 @@
 package net.maxsoft.precioustracker.model.dao;
 
+import java.io.Serializable;
 import java.util.List;
+
 import net.maxsoft.precioustracker.model.dao.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -8,8 +10,12 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table PRECIOUS_ITEM.
  */
-public class PreciousItem {
+public class PreciousItem implements Serializable {
 
+    private static final long serialVersionUID = 4478169665259540222L;
+    
+    public static final String INTENT_MESSAGE = "intent.PreciousItem";
+    
     private Long id;
     /** Not-null value. */
     private String item_name;

@@ -9,9 +9,9 @@ import java.util.Date;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousItem;
-import net.maxsoft.precioustracker.model.PreciousMove;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
+import net.maxsoft.precioustracker.model.dao.PreciousMove;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -104,9 +104,9 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
      */
     private PreciousItem getNewItem() {
         PreciousItem newItem = new PreciousItem();
-        newItem.setName(getResources().getString(R.string.createNewItem));
+        newItem.setItem_name(getResources().getString(R.string.createNewItem));
         // sets a special ID to represent an uncreated new item
-        newItem.set_id(PreciousTrackerModel.CREATE_NEW_ITEM_ID);
+        newItem.setId(PreciousTrackerModel.CREATE_NEW_ITEM_ID);
         return newItem;
     }
 
@@ -137,7 +137,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
                 // get the newly created item ID from intent's extras
                 Bundle extras = data.getExtras();
                 long itemId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_ITEM_ID);
-                newMove.setItemId(itemId);
+                newMove.setItem_id(itemId);
 
                 // refreshes the item list
                 populateItemList();
@@ -197,9 +197,9 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
         }
 
         getPreciousMove();
-        newMove.setFromWhere(fromWhere);
-        newMove.setToWhere(toWhere);
-        newMove.setDateMoved(dateMoved);
+        newMove.setFrom_where(fromWhere);
+        newMove.setTo_where(toWhere);
+        newMove.setDate(dateMoved);
 
         model.insertNewMove(newMove);
         setResult(RESULT_OK);
@@ -233,14 +233,14 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         PreciousItem item = itemList.get(position);
-        if (item.get_id() == PreciousTrackerModel.CREATE_NEW_ITEM_ID) {
+        if (item.getId() == PreciousTrackerModel.CREATE_NEW_ITEM_ID) {
             // launch the CreateItemActivity to create a new item
             Intent intent = new Intent(this, CreateItemActivity.class);
             startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_ITEM);
         } else {
             // set the selected item to the new move record
             getPreciousMove();
-            newMove.setItemId(item.get_id());
+            newMove.setItem_id(item.getId());
         }
     }
 

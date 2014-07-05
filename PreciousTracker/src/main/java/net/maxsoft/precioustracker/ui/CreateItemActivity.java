@@ -4,9 +4,9 @@ import java.io.File;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousCategory;
-import net.maxsoft.precioustracker.model.PreciousItem;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousCategory;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -88,9 +88,9 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 	 */
 	private PreciousCategory getNewCategory() {
 		PreciousCategory newCategory = new PreciousCategory();
-		newCategory.setName(getResources().getString(R.string.createNewCategory));
+		newCategory.setCat_name(getResources().getString(R.string.createNewCategory));
 		// sets a special ID to represent an yet to be created new category
-		newCategory.set_id(PreciousTrackerModel.CREATE_NEW_CATEGORY_ID);
+		newCategory.setId(PreciousTrackerModel.CREATE_NEW_CATEGORY_ID);
 		return newCategory;
 	}
 
@@ -132,7 +132,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 
 		// make sure newItem isn't null
 		getPreciousItem();
-		newItem.setName(itemName);
+		newItem.setItem_name(itemName);
 		newItem.setLocation(itemLoc);
 		model.insertNewItem(newItem);
 		setResult(RESULT_OK);
@@ -155,14 +155,14 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 	@Override
 	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 		PreciousCategory category = categoryList.get(position);
-		if (category.get_id() == PreciousTrackerModel.CREATE_NEW_CATEGORY_ID) {
+		if (category.getId() == PreciousTrackerModel.CREATE_NEW_CATEGORY_ID) {
 			// special item selected. trigger the CreateCategoryActivity
 			Intent intent = new Intent(this, CreateCategoryActivity.class);
 			startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY);
 		} else {
 			// sets the selected category on the new PreciousItem object
 			getPreciousItem();
-			newItem.setCategoryId(category.get_id());
+			newItem.setCategory_id(category.getId());
 		}
 	}
 
@@ -178,7 +178,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
      */
     public void onTakePortrait(View v) {
         String portraitFilePath = model.getOutputMediaFilePath();
-        getPreciousItem().setPhotoFilePath(portraitFilePath);
+        getPreciousItem().setItem_photo(portraitFilePath);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = new File(portraitFilePath);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
@@ -195,14 +195,14 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
                 getPreciousItem();
 
                 // prepare the Uri object to use with ImageView
-                String photoFilePath = newItem.getPhotoFilePath();
+                String photoFilePath = newItem.getItem_photo();
                 File file = new File(photoFilePath);
                 Uri imageUri = Uri.fromFile(file);
 
                 ImageView imgPortrait = (ImageView) findViewById(R.id.imgPortrait);
                 imgPortrait.setImageURI(imageUri);
 
-                newItem.setPhotoFilePath(photoFilePath);
+                newItem.setItem_photo(photoFilePath);
             }
             break;
         // respond to new category creation results
@@ -213,7 +213,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
                 // get the newly created item ID from intent's extras
                 Bundle extras = data.getExtras();
                 long categoryId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID);
-                newItem.setCategoryId(categoryId);
+                newItem.setCategory_id(categoryId);
 
                 // refreshes the item list
                 populateCategoryList();

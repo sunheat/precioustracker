@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousMove;
+import net.maxsoft.precioustracker.model.dao.PreciousMove;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -50,8 +50,8 @@ public class PreciousMoveAdapter extends BaseAdapter {
         ImageView imgSnapshot = (ImageView) convertView.findViewById(R.id.movesListImg);
 
         PreciousMove item = data.get(position);
-        txtItemName.setText(item.getItemName());
-        txtItemLoc.setText(item.getToWhere());
+        // TODO txtItemName.setText(item.getItemName());
+        txtItemLoc.setText(item.getTo_where());
         // set the snapshot image if not null
         String snapshotFilePath = item.getSnapshot();
         if (snapshotFilePath != null) {

@@ -5,8 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousMove;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousMove;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
@@ -50,15 +50,15 @@ public class DisplayMoveActivity extends Activity {
         Intent intent = getIntent();
         move = (PreciousMove) intent.getSerializableExtra(PreciousMove.INTENT_MESSAGE);
 
-        txtItemName.setText(move.getItemName());
+        // TODO txtItemName.setText(move.getItemName());
 
         // format the date
-        Date dateMoved = move.getDateMoved();
+        Date dateMoved = move.getDate();
         String formatedDate = SimpleDateFormat.getDateTimeInstance().format(dateMoved);
 
         txtDateMoved.setText(formatedDate);
-        txtFromWhere.setText(move.getFromWhere());
-        txtToWhere.setText(move.getToWhere());
+        txtFromWhere.setText(move.getFrom_where());
+        txtToWhere.setText(move.getTo_where());
         // get the snapshot file path
         String snapshotFilePath = move.getSnapshot();
         if (snapshotFilePath != null) {

@@ -1,7 +1,7 @@
 package net.maxsoft.precioustracker.ui;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousCategory;
+import net.maxsoft.precioustracker.model.dao.PreciousCategory;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -40,7 +40,7 @@ public class DisplayCategoryActivity extends Activity {
         Intent intent = getIntent();
         PreciousCategory category = (PreciousCategory) intent.getSerializableExtra(PreciousCategory.INTENT_MESSAGE);
         
-        txtCategoryName.setText(category.getName());
+        txtCategoryName.setText(category.getCat_name());
     }
 
     @Override

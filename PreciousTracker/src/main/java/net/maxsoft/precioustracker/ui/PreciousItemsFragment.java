@@ -3,8 +3,8 @@ package net.maxsoft.precioustracker.ui;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousItem;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;

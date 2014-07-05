@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousItem;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;
@@ -46,9 +46,9 @@ public class PreciousItemAdapter extends BaseAdapter {
         TextView txtItemLoc = (TextView) convertView.findViewById(R.id.itemListTxtLoc);
 
         PreciousItem item = data.get(position);
-        txtItemName.setText(item.getName());
+        txtItemName.setText(item.getItem_name());
         txtItemLoc.setText(item.getLocation());
-        String photoFilePath = item.getPhotoFilePath();
+        String photoFilePath = item.getItem_photo();
         if (photoFilePath != null) {
             ImageView imgPortrait = (ImageView) convertView.findViewById(R.id.itemListImg);
             imgPortrait.setImageURI(Uri.fromFile(new File(photoFilePath)));
