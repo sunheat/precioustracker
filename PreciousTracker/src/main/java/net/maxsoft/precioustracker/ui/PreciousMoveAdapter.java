@@ -51,9 +51,9 @@ public class PreciousMoveAdapter extends BaseAdapter {
 
         PreciousMove item = data.get(position);
         // TODO txtItemName.setText(item.getItemName());
-        txtItemLoc.setText(item.getTo_where());
+        txtItemLoc.setText(item.getToWhere());
         // set the snapshot image if not null
-        String snapshotFilePath = item.getSnapshot();
+        String snapshotFilePath = item.getSnapshotFilePath();
         if (snapshotFilePath != null) {
             File file = new File(snapshotFilePath);
             Uri uri = Uri.fromFile(file);

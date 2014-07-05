@@ -46,17 +46,17 @@ public class DisplayItemActivity extends Activity {
         Intent intent = getIntent();
         item = (PreciousItem) intent.getSerializableExtra(PreciousItem.INTENT_MESSAGE);
 
-        txtItemName.setText(item.getItem_name());
+        txtItemName.setText(item.getName());
         // TODO txtCategory.setText(item.getCategoryName());
         txtLocation.setText(item.getLocation());
 
         // format the date
-        Date dateCreated = item.getDate_created();
+        Date dateCreated = item.getDateCreated();
         String formatedDate = SimpleDateFormat.getDateTimeInstance().format(dateCreated);
         txtDateCreated.setText(formatedDate);
 
         // display the photo if it's not null
-        String photoFilePath = item.getItem_photo();
+        String photoFilePath = item.getPhotoFilePath();
         if (photoFilePath != null) {
             File file = new File(photoFilePath);
             Uri snapshotUri = Uri.fromFile(file);
@@ -78,7 +78,7 @@ public class DisplayItemActivity extends Activity {
      * @param v
      */
     public void onPhotoClicked(View v) {
-        String photoFilePath = item.getItem_photo();
+        String photoFilePath = item.getPhotoFilePath();
         if (photoFilePath != null) {
             Intent intent = new Intent(getBaseContext(), ShowPhotoActivity.class);
             intent.putExtra(PreciousTrackerModel.EXTRA_PHOTO_FILE_PATH, photoFilePath);

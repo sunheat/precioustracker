@@ -46,9 +46,9 @@ public class PreciousItemAdapter extends BaseAdapter {
         TextView txtItemLoc = (TextView) convertView.findViewById(R.id.itemListTxtLoc);
 
         PreciousItem item = data.get(position);
-        txtItemName.setText(item.getItem_name());
+        txtItemName.setText(item.getName());
         txtItemLoc.setText(item.getLocation());
-        String photoFilePath = item.getItem_photo();
+        String photoFilePath = item.getPhotoFilePath();
         if (photoFilePath != null) {
             ImageView imgPortrait = (ImageView) convertView.findViewById(R.id.itemListImg);
             imgPortrait.setImageURI(Uri.fromFile(new File(photoFilePath)));

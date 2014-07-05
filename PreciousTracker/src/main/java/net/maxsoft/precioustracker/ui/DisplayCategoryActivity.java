@@ -40,7 +40,7 @@ public class DisplayCategoryActivity extends Activity {
         Intent intent = getIntent();
         PreciousCategory category = (PreciousCategory) intent.getSerializableExtra(PreciousCategory.INTENT_MESSAGE);
         
-        txtCategoryName.setText(category.getCat_name());
+        txtCategoryName.setText(category.getName());
     }
 
     @Override

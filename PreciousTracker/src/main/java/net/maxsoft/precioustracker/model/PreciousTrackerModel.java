@@ -12,10 +12,10 @@ import de.greenrobot.dao.query.LazyList;
 import de.greenrobot.dao.query.QueryBuilder;
 import net.maxsoft.precioustracker.model.dao.DaoMaster;
 import net.maxsoft.precioustracker.model.dao.DaoSession;
-import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
 import net.maxsoft.precioustracker.model.dao.PreciousCategory;
 import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import net.maxsoft.precioustracker.model.dao.PreciousMove;
+import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -54,7 +54,8 @@ public class PreciousTrackerModel {
 
     protected PreciousTrackerModel(Context context) {
         if (dbHelper == null) {
-            new DaoMaster.DevOpenHelper(context, DATABASE_NAME, null);
+            dbHelper = new DaoMaster.DevOpenHelper(context, DATABASE_NAME, null);
+            generateSampleData(dbHelper);
             broadcastManager = LocalBroadcastManager.getInstance(context);
         }
     }

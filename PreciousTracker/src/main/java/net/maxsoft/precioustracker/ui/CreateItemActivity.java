@@ -88,7 +88,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 	 */
 	private PreciousCategory getNewCategory() {
 		PreciousCategory newCategory = new PreciousCategory();
-		newCategory.setCat_name(getResources().getString(R.string.createNewCategory));
+		newCategory.setName(getResources().getString(R.string.createNewCategory));
 		// sets a special ID to represent an yet to be created new category
 		newCategory.setId(PreciousTrackerModel.CREATE_NEW_CATEGORY_ID);
 		return newCategory;
@@ -132,7 +132,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 
 		// make sure newItem isn't null
 		getPreciousItem();
-		newItem.setItem_name(itemName);
+		newItem.setName(itemName);
 		newItem.setLocation(itemLoc);
 		model.insertNewItem(newItem);
 		setResult(RESULT_OK);
@@ -162,7 +162,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 		} else {
 			// sets the selected category on the new PreciousItem object
 			getPreciousItem();
-			newItem.setCategory_id(category.getId());
+			newItem.setCategoryId(category.getId());
 		}
 	}
 
@@ -178,7 +178,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
      */
     public void onTakePortrait(View v) {
         String portraitFilePath = model.getOutputMediaFilePath();
-        getPreciousItem().setItem_photo(portraitFilePath);
+        getPreciousItem().setPhotoFilePath(portraitFilePath);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = new File(portraitFilePath);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
@@ -195,14 +195,14 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
                 getPreciousItem();
 
                 // prepare the Uri object to use with ImageView
-                String photoFilePath = newItem.getItem_photo();
+                String photoFilePath = newItem.getPhotoFilePath();
                 File file = new File(photoFilePath);
                 Uri imageUri = Uri.fromFile(file);
 
                 ImageView imgPortrait = (ImageView) findViewById(R.id.imgPortrait);
                 imgPortrait.setImageURI(imageUri);
 
-                newItem.setItem_photo(photoFilePath);
+                newItem.setPhotoFilePath(photoFilePath);
             }
             break;
         // respond to new category creation results
@@ -213,7 +213,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
                 // get the newly created item ID from intent's extras
                 Bundle extras = data.getExtras();
                 long categoryId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID);
-                newItem.setCategory_id(categoryId);
+                newItem.setCategoryId(categoryId);
 
                 // refreshes the item list
                 populateCategoryList();

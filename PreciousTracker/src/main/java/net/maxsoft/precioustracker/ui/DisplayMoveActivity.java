@@ -53,14 +53,14 @@ public class DisplayMoveActivity extends Activity {
         // TODO txtItemName.setText(move.getItemName());
 
         // format the date
-        Date dateMoved = move.getDate();
+        Date dateMoved = move.getDateMoved();
         String formatedDate = SimpleDateFormat.getDateTimeInstance().format(dateMoved);
 
         txtDateMoved.setText(formatedDate);
-        txtFromWhere.setText(move.getFrom_where());
-        txtToWhere.setText(move.getTo_where());
+        txtFromWhere.setText(move.getFromWhere());
+        txtToWhere.setText(move.getToWhere());
         // get the snapshot file path
-        String snapshotFilePath = move.getSnapshot();
+        String snapshotFilePath = move.getSnapshotFilePath();
         if (snapshotFilePath != null) {
             File file = new File(snapshotFilePath);
             Uri snapshotUri = Uri.fromFile(file);
@@ -82,9 +82,9 @@ public class DisplayMoveActivity extends Activity {
      * @param v
      */
     public void onSnapshotClicked(View v) {
-        if (move.getSnapshot() != null) {
+        if (move.getSnapshotFilePath() != null) {
             Intent intent = new Intent(getBaseContext(), ShowPhotoActivity.class);
-            intent.putExtra(PreciousTrackerModel.EXTRA_PHOTO_FILE_PATH, move.getSnapshot());
+            intent.putExtra(PreciousTrackerModel.EXTRA_PHOTO_FILE_PATH, move.getSnapshotFilePath());
             startActivity(intent);
         }
     }

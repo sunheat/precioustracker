@@ -104,7 +104,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
      */
     private PreciousItem getNewItem() {
         PreciousItem newItem = new PreciousItem();
-        newItem.setItem_name(getResources().getString(R.string.createNewItem));
+        newItem.setName(getResources().getString(R.string.createNewItem));
         // sets a special ID to represent an uncreated new item
         newItem.setId(PreciousTrackerModel.CREATE_NEW_ITEM_ID);
         return newItem;
@@ -120,14 +120,14 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
                 getPreciousMove();
 
                 // prepare the Uri object to use with ImageView
-                String snapshotPath = newMove.getSnapshot();
+                String snapshotPath = newMove.getSnapshotFilePath();
                 File file = new File(snapshotPath);
                 Uri imageUri = Uri.fromFile(file);
 
                 ImageView imgSnapshot = (ImageView) findViewById(R.id.imgSnapshot);
                 imgSnapshot.setImageURI(imageUri);
 
-                newMove.setSnapshot(snapshotPath);
+                newMove.setSnapshotFilePath(snapshotPath);
             }
             break;
         case PreciousTrackerModel.REQ_CODE_CREATE_ITEM:
@@ -137,7 +137,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
                 // get the newly created item ID from intent's extras
                 Bundle extras = data.getExtras();
                 long itemId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_ITEM_ID);
-                newMove.setItem_id(itemId);
+                newMove.setItemId(itemId);
 
                 // refreshes the item list
                 populateItemList();
@@ -163,7 +163,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
      */
     public void onSnapshot(View v) {
         String snapshotFilePath = model.getOutputMediaFilePath();
-        getPreciousMove().setSnapshot(snapshotFilePath);
+        getPreciousMove().setSnapshotFilePath(snapshotFilePath);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = new File(snapshotFilePath);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
@@ -197,9 +197,9 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
         }
 
         getPreciousMove();
-        newMove.setFrom_where(fromWhere);
-        newMove.setTo_where(toWhere);
-        newMove.setDate(dateMoved);
+        newMove.setFromWhere(fromWhere);
+        newMove.setToWhere(toWhere);
+        newMove.setDateMoved(dateMoved);
 
         model.insertNewMove(newMove);
         setResult(RESULT_OK);
@@ -240,7 +240,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
         } else {
             // set the selected item to the new move record
             getPreciousMove();
-            newMove.setItem_id(item.getId());
+            newMove.setItemId(item.getId());
         }
     }
 
