@@ -1,6 +1,7 @@
 package net.maxsoft.precioustracker.ui;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
@@ -24,6 +25,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import de.greenrobot.dao.query.LazyList;
 
 /**
  * The CreateItemActivity used for creating item records.
@@ -33,145 +35,149 @@ import android.widget.TextView;
  */
 public class CreateItemActivity extends Activity implements OnItemSelectedListener {
 
-	private PreciousTrackerModel model;
-	private PreciousItem newItem;
-	private List<PreciousCategory> categoryList;
+    private PreciousTrackerModel model;
+    private PreciousItem newItem;
+    private List<PreciousCategory> categoryList;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_create_item);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_create_item);
 
-		if (savedInstanceState == null) {
-			getFragmentManager().beginTransaction().add(R.id.container, new CreateItemFragment()).commit();
-		}
+        if (savedInstanceState == null) {
+            getFragmentManager().beginTransaction().add(R.id.container, new CreateItemFragment()).commit();
+        }
 
-		// enable up button in action bar
-		ActionBar actionBar = getActionBar();
-		actionBar.setDisplayHomeAsUpEnabled(true);
-	}
+        // enable up button in action bar
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
 
-	@Override
-	protected void onStart() {
-		super.onStart();
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-		if (model == null) {
-			model = PreciousTrackerModel.getInstance(this);
-		}
+        if (model == null) {
+            model = PreciousTrackerModel.getInstance(this);
+        }
 
-		populateCategoryList();
-	}
+        populateCategoryList();
+    }
 
-	/**
-	 * Populates the category spinner.
-	 */
-	private void populateCategoryList() {
-		// get the category list from the database
-		categoryList = model.getCategoryList();
-		// add an item for triggering the new category creation activity
-		categoryList.add(getNewCategory());
+    /**
+     * Populates the category spinner.
+     */
+    private void populateCategoryList() {
+        // get the category list from the database
+        LazyList<PreciousCategory> lazyList = model.getCategoryList();
+        // make a copy of the list since the list is wired to database
+        categoryList = new ArrayList<PreciousCategory>(lazyList.size() + 1);
+        categoryList.addAll(lazyList);
+        // add an item for triggering the new category creation activity
+        categoryList.add(getNewCategory());
 
-		// using ArrayAdapter to display spinner items
-		ArrayAdapter<PreciousCategory> adapter = new ArrayAdapter<PreciousCategory>(this, android.R.layout.simple_spinner_item, categoryList);
-		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // using ArrayAdapter to display spinner items
+        ArrayAdapter<PreciousCategory> adapter = new ArrayAdapter<PreciousCategory>(this,
+                android.R.layout.simple_spinner_item, categoryList);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-		Spinner lstCategory = (Spinner) findViewById(R.id.lstCategory);
-		lstCategory.setAdapter(adapter);
-		lstCategory.setOnItemSelectedListener(this);
-	}
+        Spinner lstCategory = (Spinner) findViewById(R.id.lstCategory);
+        lstCategory.setAdapter(adapter);
+        lstCategory.setOnItemSelectedListener(this);
+    }
 
-	/**
-	 * Returns a category item for the spinner that can be used to trigger new
-	 * category creation.
-	 * 
-	 * @return
-	 */
-	private PreciousCategory getNewCategory() {
-		PreciousCategory newCategory = new PreciousCategory();
-		newCategory.setName(getResources().getString(R.string.createNewCategory));
-		// sets a special ID to represent an yet to be created new category
-		newCategory.setId(PreciousTrackerModel.CREATE_NEW_CATEGORY_ID);
-		return newCategory;
-	}
+    /**
+     * Returns a category item for the spinner that can be used to trigger new
+     * category creation.
+     * 
+     * @return
+     */
+    private PreciousCategory getNewCategory() {
+        PreciousCategory newCategory = new PreciousCategory();
+        newCategory.setName(getResources().getString(R.string.createNewCategory));
+        // sets a special ID to represent an yet to be created new category
+        newCategory.setId(PreciousTrackerModel.CREATE_NEW_CATEGORY_ID);
+        return newCategory;
+    }
 
-	/**
-	 * Initializes and returns the PreciousItem object that represents the
-	 * precious item database record to be created.
-	 * 
-	 * @return the PreciousItem object representing the precious item database
-	 *         record to be created
-	 */
-	private PreciousItem getPreciousItem() {
-		if (newItem == null) {
-			newItem = new PreciousItem();
-		}
-		return newItem;
-	}
+    /**
+     * Initializes and returns the PreciousItem object that represents the
+     * precious item database record to be created.
+     * 
+     * @return the PreciousItem object representing the precious item database
+     *         record to be created
+     */
+    private PreciousItem getPreciousItem() {
+        if (newItem == null) {
+            newItem = new PreciousItem();
+        }
+        return newItem;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
-	/** handles cancel button click */
-	public void onCancel(View v) {
-		finish();
-	}
+    /** handles cancel button click */
+    public void onCancel(View v) {
+        finish();
+    }
 
-	/** handles save button click */
-	public void onSave(View v) {
-		String itemName = ((TextView) findViewById(R.id.txtItemName)).getText().toString();
-		String itemLoc = ((TextView) findViewById(R.id.txtLocation)).getText().toString();
+    /** handles save button click */
+    public void onSave(View v) {
+        String itemName = ((TextView) findViewById(R.id.txtItemName)).getText().toString();
+        String itemLoc = ((TextView) findViewById(R.id.txtLocation)).getText().toString();
 
-		// make sure newItem isn't null
-		getPreciousItem();
-		newItem.setName(itemName);
-		newItem.setLocation(itemLoc);
-		model.insertNewItem(newItem);
-		setResult(RESULT_OK);
+        // make sure newItem isn't null
+        getPreciousItem();
+        newItem.setName(itemName);
+        newItem.setLocation(itemLoc);
+        model.insertNewItem(newItem);
+        setResult(RESULT_OK);
 
-		finish();
-	}
+        finish();
+    }
 
-	public static class CreateItemFragment extends Fragment {
+    public static class CreateItemFragment extends Fragment {
 
-		public CreateItemFragment() {
-		}
+        public CreateItemFragment() {
+        }
 
-		@Override
-		public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-			View rootView = inflater.inflate(R.layout.fragment_create_item, container, false);
-			return rootView;
-		}
-	}
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            View rootView = inflater.inflate(R.layout.fragment_create_item, container, false);
+            return rootView;
+        }
+    }
 
-	@Override
-	public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-		PreciousCategory category = categoryList.get(position);
-		if (category.getId() == PreciousTrackerModel.CREATE_NEW_CATEGORY_ID) {
-			// special item selected. trigger the CreateCategoryActivity
-			Intent intent = new Intent(this, CreateCategoryActivity.class);
-			startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY);
-		} else {
-			// sets the selected category on the new PreciousItem object
-			getPreciousItem();
-			newItem.setCategory(category.getId());
-		}
-	}
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        PreciousCategory category = categoryList.get(position);
+        if (category.getId() == PreciousTrackerModel.CREATE_NEW_CATEGORY_ID) {
+            // special item selected. trigger the CreateCategoryActivity
+            Intent intent = new Intent(this, CreateCategoryActivity.class);
+            startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY);
+        } else {
+            // sets the selected category on the new PreciousItem object
+            getPreciousItem();
+            newItem.setCategory(category.getId());
+        }
+    }
 
-	@Override
-	public void onNothingSelected(AdapterView<?> parent) {
-		// no logic here
-	}
-	
-	/**
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        // no logic here
+    }
+
+    /**
      * Handles portrait taking action.
      * 
      * @param v
@@ -184,7 +190,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
         startActivityForResult(intent, PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
     }
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {

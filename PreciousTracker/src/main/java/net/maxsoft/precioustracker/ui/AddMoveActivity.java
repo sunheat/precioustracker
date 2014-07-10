@@ -4,6 +4,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import de.greenrobot.dao.query.LazyList;
 
 /**
  * The AddMoveActivity used for creating move records for a precious item.
@@ -84,7 +86,10 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
      */
     private void populateItemList() {
         // get the item list from the database
-        itemList = model.getItemList();
+        LazyList<PreciousItem> lazyList = model.getItemList();
+        // since the list is database connected, make a copy for presentation
+        itemList = new ArrayList<PreciousItem>(lazyList.size() + 1);
+        itemList.addAll(lazyList);
         // add an item for triggering new new item creation activity
         itemList.add(getNewItem());
         // using ArrayAdapter to display items
