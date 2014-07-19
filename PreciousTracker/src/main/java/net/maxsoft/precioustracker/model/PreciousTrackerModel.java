@@ -115,11 +115,11 @@ public class PreciousTrackerModel {
     }
 
     public long insertNewCategory(PreciousCategory newCategory) {
-        return insertNewCategory(newCategory);
+        return insertNewRecord(newCategory);
     }
 
     public long insertNewItem(PreciousItem newItem) {
-        return insertNewItem(newItem);
+        return insertNewRecord(newItem);
     }
 
     public long insertNewMove(PreciousMove newMove) {
