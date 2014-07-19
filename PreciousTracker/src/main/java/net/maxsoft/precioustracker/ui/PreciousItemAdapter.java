@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousItem;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import android.content.Context;
 import android.net.Uri;
 import android.view.LayoutInflater;

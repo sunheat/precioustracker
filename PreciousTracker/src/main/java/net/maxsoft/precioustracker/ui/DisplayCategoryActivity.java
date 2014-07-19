@@ -1,7 +1,7 @@
 package net.maxsoft.precioustracker.ui;
 
 import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousCategory;
+import net.maxsoft.precioustracker.model.dao.PreciousCategory;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;

@@ -1,12 +1,14 @@
 package net.maxsoft.precioustracker.model.dao;
 
 import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
@@ -27,12 +29,12 @@ public class PreciousItemDao extends AbstractDao<PreciousItem, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property Item_name = new Property(1, String.class, "item_name", false, "ITEM_NAME");
+        public final static Property Name = new Property(1, String.class, "name", false, "NAME");
         public final static Property Location = new Property(2, String.class, "location", false, "LOCATION");
-        public final static Property Date_created = new Property(3, java.util.Date.class, "date_created", false, "DATE_CREATED");
-        public final static Property Last_Moved = new Property(4, java.util.Date.class, "last_Moved", false, "LAST__MOVED");
-        public final static Property Item_photo = new Property(5, String.class, "item_photo", false, "ITEM_PHOTO");
-        public final static Property Category_id = new Property(6, long.class, "category_id", false, "CATEGORY_ID");
+        public final static Property DateCreated = new Property(3, java.util.Date.class, "dateCreated", false, "DATE_CREATED");
+        public final static Property LastMoved = new Property(4, java.util.Date.class, "lastMoved", false, "LAST_MOVED");
+        public final static Property PhotoFilePath = new Property(5, String.class, "photoFilePath", false, "PHOTO_FILE_PATH");
+        public final static Property Category = new Property(6, Long.class, "category", false, "CATEGORY");
     };
 
     private DaoSession daoSession;
@@ -53,12 +55,12 @@ public class PreciousItemDao extends AbstractDao<PreciousItem, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'PRECIOUS_ITEM' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'ITEM_NAME' TEXT NOT NULL ," + // 1: item_name
+                "'NAME' TEXT NOT NULL ," + // 1: name
                 "'LOCATION' TEXT," + // 2: location
-                "'DATE_CREATED' INTEGER," + // 3: date_created
-                "'LAST__MOVED' INTEGER," + // 4: last_Moved
-                "'ITEM_PHOTO' TEXT," + // 5: item_photo
-                "'CATEGORY_ID' INTEGER NOT NULL );"); // 6: category_id
+                "'DATE_CREATED' INTEGER," + // 3: dateCreated
+                "'LAST_MOVED' INTEGER," + // 4: lastMoved
+                "'PHOTO_FILE_PATH' TEXT," + // 5: photoFilePath
+                "'CATEGORY' INTEGER);"); // 6: category
     }
 
     /** Drops the underlying database table. */
@@ -76,28 +78,32 @@ public class PreciousItemDao extends AbstractDao<PreciousItem, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindString(2, entity.getItem_name());
+        stmt.bindString(2, entity.getName());
  
         String location = entity.getLocation();
         if (location != null) {
             stmt.bindString(3, location);
         }
  
-        java.util.Date date_created = entity.getDate_created();
-        if (date_created != null) {
-            stmt.bindLong(4, date_created.getTime());
+        java.util.Date dateCreated = entity.getDateCreated();
+        if (dateCreated != null) {
+            stmt.bindLong(4, dateCreated.getTime());
         }
  
-        java.util.Date last_Moved = entity.getLast_Moved();
-        if (last_Moved != null) {
-            stmt.bindLong(5, last_Moved.getTime());
+        java.util.Date lastMoved = entity.getLastMoved();
+        if (lastMoved != null) {
+            stmt.bindLong(5, lastMoved.getTime());
         }
  
-        String item_photo = entity.getItem_photo();
-        if (item_photo != null) {
-            stmt.bindString(6, item_photo);
+        String photoFilePath = entity.getPhotoFilePath();
+        if (photoFilePath != null) {
+            stmt.bindString(6, photoFilePath);
         }
-        stmt.bindLong(7, entity.getCategory_id());
+ 
+        Long category = entity.getCategory();
+        if (category != null) {
+            stmt.bindLong(7, category);
+        }
     }
 
     @Override
@@ -117,12 +123,12 @@ public class PreciousItemDao extends AbstractDao<PreciousItem, Long> {
     public PreciousItem readEntity(Cursor cursor, int offset) {
         PreciousItem entity = new PreciousItem( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getString(offset + 1), // item_name
+            cursor.getString(offset + 1), // name
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // location
-            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // date_created
-            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // last_Moved
-            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // item_photo
-            cursor.getLong(offset + 6) // category_id
+            cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)), // dateCreated
+            cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)), // lastMoved
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // photoFilePath
+            cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6) // category
         );
         return entity;
     }
@@ -131,12 +137,12 @@ public class PreciousItemDao extends AbstractDao<PreciousItem, Long> {
     @Override
     public void readEntity(Cursor cursor, PreciousItem entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setItem_name(cursor.getString(offset + 1));
+        entity.setName(cursor.getString(offset + 1));
         entity.setLocation(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
-        entity.setDate_created(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setLast_Moved(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
-        entity.setItem_photo(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
-        entity.setCategory_id(cursor.getLong(offset + 6));
+        entity.setDateCreated(cursor.isNull(offset + 3) ? null : new java.util.Date(cursor.getLong(offset + 3)));
+        entity.setLastMoved(cursor.isNull(offset + 4) ? null : new java.util.Date(cursor.getLong(offset + 4)));
+        entity.setPhotoFilePath(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setCategory(cursor.isNull(offset + 6) ? null : cursor.getLong(offset + 6));
      }
     
     /** @inheritdoc */
@@ -163,17 +169,108 @@ public class PreciousItemDao extends AbstractDao<PreciousItem, Long> {
     }
     
     /** Internal query to resolve the "preciousItemList" to-many relationship of PreciousCategory. */
-    public List<PreciousItem> _queryPreciousCategory_PreciousItemList(long category_id) {
+    public List<PreciousItem> _queryPreciousCategory_PreciousItemList(Long category) {
         synchronized (this) {
             if (preciousCategory_PreciousItemListQuery == null) {
                 QueryBuilder<PreciousItem> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Category_id.eq(null));
+                queryBuilder.where(Properties.Category.eq(null));
                 preciousCategory_PreciousItemListQuery = queryBuilder.build();
             }
         }
         Query<PreciousItem> query = preciousCategory_PreciousItemListQuery.forCurrentThread();
-        query.setParameter(0, category_id);
+        query.setParameter(0, category);
         return query.list();
     }
 
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getPreciousCategoryDao().getAllColumns());
+            builder.append(" FROM PRECIOUS_ITEM T");
+            builder.append(" LEFT JOIN PRECIOUS_CATEGORY T0 ON T.'CATEGORY'=T0.'_id'");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected PreciousItem loadCurrentDeep(Cursor cursor, boolean lock) {
+        PreciousItem entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        PreciousCategory preciousCategory = loadCurrentOther(daoSession.getPreciousCategoryDao(), cursor, offset);
+        entity.setPreciousCategory(preciousCategory);
+
+        return entity;    
+    }
+
+    public PreciousItem loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<PreciousItem> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<PreciousItem> list = new ArrayList<PreciousItem>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<PreciousItem> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<PreciousItem> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

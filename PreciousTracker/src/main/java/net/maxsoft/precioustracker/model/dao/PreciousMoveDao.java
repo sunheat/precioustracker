@@ -1,12 +1,14 @@
 package net.maxsoft.precioustracker.model.dao;
 
 import java.util.List;
+import java.util.ArrayList;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
+import de.greenrobot.dao.internal.SqlUtils;
 import de.greenrobot.dao.internal.DaoConfig;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
@@ -27,12 +29,14 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
     */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property From_where = new Property(1, String.class, "from_where", false, "FROM_WHERE");
-        public final static Property To_where = new Property(2, String.class, "to_where", false, "TO_WHERE");
-        public final static Property Date = new Property(3, java.util.Date.class, "date", false, "DATE");
-        public final static Property Snapshot = new Property(4, String.class, "snapshot", false, "SNAPSHOT");
-        public final static Property Item_id = new Property(5, long.class, "item_id", false, "ITEM_ID");
+        public final static Property FromWhere = new Property(1, String.class, "fromWhere", false, "FROM_WHERE");
+        public final static Property ToWhere = new Property(2, String.class, "toWhere", false, "TO_WHERE");
+        public final static Property DateMoved = new Property(3, java.util.Date.class, "dateMoved", false, "DATE_MOVED");
+        public final static Property SnapshotFilePath = new Property(4, String.class, "snapshotFilePath", false, "SNAPSHOT_FILE_PATH");
+        public final static Property Item = new Property(5, long.class, "item", false, "ITEM");
     };
+
+    private DaoSession daoSession;
 
     private Query<PreciousMove> preciousItem_PreciousMoveListQuery;
 
@@ -42,6 +46,7 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
     
     public PreciousMoveDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -49,11 +54,11 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'PRECIOUS_MOVE' (" + //
                 "'_id' INTEGER PRIMARY KEY ," + // 0: id
-                "'FROM_WHERE' TEXT NOT NULL ," + // 1: from_where
-                "'TO_WHERE' TEXT NOT NULL ," + // 2: to_where
-                "'DATE' INTEGER NOT NULL ," + // 3: date
-                "'SNAPSHOT' TEXT," + // 4: snapshot
-                "'ITEM_ID' INTEGER NOT NULL );"); // 5: item_id
+                "'FROM_WHERE' TEXT NOT NULL ," + // 1: fromWhere
+                "'TO_WHERE' TEXT NOT NULL ," + // 2: toWhere
+                "'DATE_MOVED' INTEGER NOT NULL ," + // 3: dateMoved
+                "'SNAPSHOT_FILE_PATH' TEXT," + // 4: snapshotFilePath
+                "'ITEM' INTEGER NOT NULL );"); // 5: item
     }
 
     /** Drops the underlying database table. */
@@ -71,15 +76,21 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindString(2, entity.getFrom_where());
-        stmt.bindString(3, entity.getTo_where());
-        stmt.bindLong(4, entity.getDate().getTime());
+        stmt.bindString(2, entity.getFromWhere());
+        stmt.bindString(3, entity.getToWhere());
+        stmt.bindLong(4, entity.getDateMoved().getTime());
  
-        String snapshot = entity.getSnapshot();
-        if (snapshot != null) {
-            stmt.bindString(5, snapshot);
+        String snapshotFilePath = entity.getSnapshotFilePath();
+        if (snapshotFilePath != null) {
+            stmt.bindString(5, snapshotFilePath);
         }
-        stmt.bindLong(6, entity.getItem_id());
+        stmt.bindLong(6, entity.getItem());
+    }
+
+    @Override
+    protected void attachEntity(PreciousMove entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */
@@ -93,11 +104,11 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
     public PreciousMove readEntity(Cursor cursor, int offset) {
         PreciousMove entity = new PreciousMove( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getString(offset + 1), // from_where
-            cursor.getString(offset + 2), // to_where
-            new java.util.Date(cursor.getLong(offset + 3)), // date
-            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // snapshot
-            cursor.getLong(offset + 5) // item_id
+            cursor.getString(offset + 1), // fromWhere
+            cursor.getString(offset + 2), // toWhere
+            new java.util.Date(cursor.getLong(offset + 3)), // dateMoved
+            cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // snapshotFilePath
+            cursor.getLong(offset + 5) // item
         );
         return entity;
     }
@@ -106,11 +117,11 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
     @Override
     public void readEntity(Cursor cursor, PreciousMove entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setFrom_where(cursor.getString(offset + 1));
-        entity.setTo_where(cursor.getString(offset + 2));
-        entity.setDate(new java.util.Date(cursor.getLong(offset + 3)));
-        entity.setSnapshot(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
-        entity.setItem_id(cursor.getLong(offset + 5));
+        entity.setFromWhere(cursor.getString(offset + 1));
+        entity.setToWhere(cursor.getString(offset + 2));
+        entity.setDateMoved(new java.util.Date(cursor.getLong(offset + 3)));
+        entity.setSnapshotFilePath(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
+        entity.setItem(cursor.getLong(offset + 5));
      }
     
     /** @inheritdoc */
@@ -137,17 +148,110 @@ public class PreciousMoveDao extends AbstractDao<PreciousMove, Long> {
     }
     
     /** Internal query to resolve the "preciousMoveList" to-many relationship of PreciousItem. */
-    public List<PreciousMove> _queryPreciousItem_PreciousMoveList(long item_id) {
+    public List<PreciousMove> _queryPreciousItem_PreciousMoveList(long item) {
         synchronized (this) {
             if (preciousItem_PreciousMoveListQuery == null) {
                 QueryBuilder<PreciousMove> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Item_id.eq(null));
+                queryBuilder.where(Properties.Item.eq(null));
                 preciousItem_PreciousMoveListQuery = queryBuilder.build();
             }
         }
         Query<PreciousMove> query = preciousItem_PreciousMoveListQuery.forCurrentThread();
-        query.setParameter(0, item_id);
+        query.setParameter(0, item);
         return query.list();
     }
 
+    private String selectDeep;
+
+    protected String getSelectDeep() {
+        if (selectDeep == null) {
+            StringBuilder builder = new StringBuilder("SELECT ");
+            SqlUtils.appendColumns(builder, "T", getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T0", daoSession.getPreciousItemDao().getAllColumns());
+            builder.append(" FROM PRECIOUS_MOVE T");
+            builder.append(" LEFT JOIN PRECIOUS_ITEM T0 ON T.'ITEM'=T0.'_id'");
+            builder.append(' ');
+            selectDeep = builder.toString();
+        }
+        return selectDeep;
+    }
+    
+    protected PreciousMove loadCurrentDeep(Cursor cursor, boolean lock) {
+        PreciousMove entity = loadCurrent(cursor, 0, lock);
+        int offset = getAllColumns().length;
+
+        PreciousItem preciousItem = loadCurrentOther(daoSession.getPreciousItemDao(), cursor, offset);
+         if(preciousItem != null) {
+            entity.setPreciousItem(preciousItem);
+        }
+
+        return entity;    
+    }
+
+    public PreciousMove loadDeep(Long key) {
+        assertSinglePk();
+        if (key == null) {
+            return null;
+        }
+
+        StringBuilder builder = new StringBuilder(getSelectDeep());
+        builder.append("WHERE ");
+        SqlUtils.appendColumnsEqValue(builder, "T", getPkColumns());
+        String sql = builder.toString();
+        
+        String[] keyArray = new String[] { key.toString() };
+        Cursor cursor = db.rawQuery(sql, keyArray);
+        
+        try {
+            boolean available = cursor.moveToFirst();
+            if (!available) {
+                return null;
+            } else if (!cursor.isLast()) {
+                throw new IllegalStateException("Expected unique result, but count was " + cursor.getCount());
+            }
+            return loadCurrentDeep(cursor, true);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+    /** Reads all available rows from the given cursor and returns a list of new ImageTO objects. */
+    public List<PreciousMove> loadAllDeepFromCursor(Cursor cursor) {
+        int count = cursor.getCount();
+        List<PreciousMove> list = new ArrayList<PreciousMove>(count);
+        
+        if (cursor.moveToFirst()) {
+            if (identityScope != null) {
+                identityScope.lock();
+                identityScope.reserveRoom(count);
+            }
+            try {
+                do {
+                    list.add(loadCurrentDeep(cursor, false));
+                } while (cursor.moveToNext());
+            } finally {
+                if (identityScope != null) {
+                    identityScope.unlock();
+                }
+            }
+        }
+        return list;
+    }
+    
+    protected List<PreciousMove> loadDeepAllAndCloseCursor(Cursor cursor) {
+        try {
+            return loadAllDeepFromCursor(cursor);
+        } finally {
+            cursor.close();
+        }
+    }
+    
+
+    /** A raw-style query where you can pass any WHERE clause and arguments. */
+    public List<PreciousMove> queryDeep(String where, String... selectionArg) {
+        Cursor cursor = db.rawQuery(getSelectDeep() + where, selectionArg);
+        return loadDeepAllAndCloseCursor(cursor);
+    }
+ 
 }

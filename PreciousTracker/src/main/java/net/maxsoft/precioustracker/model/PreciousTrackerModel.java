@@ -1,26 +1,35 @@
 package net.maxsoft.precioustracker.model;
 
+import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.DATABASE_NAME;
+import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.generateSampleData;
+
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import net.maxsoft.precioustracker.model.PreciousCategoryTable.PreciousCategoryEntry;
-import net.maxsoft.precioustracker.model.PreciousItemTable.PreciousItemEntry;
-import net.maxsoft.precioustracker.model.PreciousMoveTable.PreciousMoveEntry;
+import net.maxsoft.precioustracker.model.dao.DaoMaster;
+import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
+import net.maxsoft.precioustracker.model.dao.DaoSession;
+import net.maxsoft.precioustracker.model.dao.PreciousCategory;
+import net.maxsoft.precioustracker.model.dao.PreciousCategoryDao;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
+import net.maxsoft.precioustracker.model.dao.PreciousMove;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import de.greenrobot.dao.AbstractDao;
+import de.greenrobot.dao.query.LazyList;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
+import de.greenrobot.dao.query.WhereCondition;
 
 public class PreciousTrackerModel {
 
@@ -45,12 +54,13 @@ public class PreciousTrackerModel {
 
     private static PreciousTrackerModel instance;
 
-    private PreciousTrackerDbHelper dbHelper;
+    private DevOpenHelper dbHelper;
     private LocalBroadcastManager broadcastManager;
 
     protected PreciousTrackerModel(Context context) {
         if (dbHelper == null) {
-            dbHelper = new PreciousTrackerDbHelper(context);
+            dbHelper = new DaoMaster.DevOpenHelper(context, DATABASE_NAME, null);
+            generateSampleData(dbHelper);
             broadcastManager = LocalBroadcastManager.getInstance(context);
         }
     }
@@ -62,78 +72,67 @@ public class PreciousTrackerModel {
         return instance;
     }
 
-    public List<PreciousItem> getItemList() {
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery(PreciousTrackerDbHelper.ITEM_QUERY, null);
-        int size = c.getCount();
-        List<PreciousItem> results = new ArrayList<PreciousItem>(size);
-        while (c.moveToNext()) {
-            PreciousItem item = new PreciousItem();
-            int idIdx = c.getColumnIndex(PreciousItemEntry._ID);
-            item._id = c.getLong(idIdx);
-            int nameIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_ITEM_NAME);
-            item.setName(c.getString(nameIdx));
-            int locIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_LOC);
-            item.setLocation(c.getString(locIdx));
-            int lastMovedIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_LAST_MOVED);
-            item.setLastMoved(c.getString(lastMovedIdx));
-            int catNameIdx = c.getColumnIndex(PreciousCategoryEntry.COLUMN_NAME_NAME);
-            item.setCategoryName(c.getString(catNameIdx));
-            int catIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID);
-            item.setCategoryId(c.getLong(catIdx));
-            int dateCreatedIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_DATE_CREATED);
-            item.setDateCreated(new Date(c.getLong(dateCreatedIdx)));
-            int photoIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_PHOTO);
-            item.setPhotoFilePath(c.getString(photoIdx));
-            results.add(item);
-        }
-        return results;
+    /**
+     * Returns a lazy-loading list of {@link PreciousItem} objects. The list
+     * MUST be closed after use.
+     * 
+     * @return a {@link LazyList} for accessing {@link PreciousItem} objects
+     */
+    public LazyList<PreciousItem> getItemList() {
+        LazyList<PreciousItem> itemList = getAllRecords(PreciousItem.class);
+        return itemList;
     }
 
-    public List<PreciousMove> getRecentMoves() {
+    /**
+     * Returns a lazy-loading list of {@link PreciousMove} objects. The list
+     * MUST be closed after use.
+     * 
+     * @return a {@link LazyList} for accessing {@link PreciousMove} objects
+     */
+    public LazyList<PreciousMove> getRecentMoves() {
+        LazyList<PreciousMove> moveList = getAllRecords(PreciousMove.class);
+        return moveList;
+    }
+
+    /**
+     * Returns a lazy-loading list of {@link PreciousCategory} objects. The list
+     * MUST be closed after use.
+     * 
+     * @return a {@link LazyList} for accessing {@link PreciousCategory} objects
+     */
+    public LazyList<PreciousCategory> getCategoryList() {
+        LazyList<PreciousCategory> catList = getAllRecords(PreciousCategory.class);
+        return catList;
+    }
+
+    private <T> LazyList<T> getAllRecords(Class<T> type) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor c = db.rawQuery(PreciousTrackerDbHelper.MOVE_QUERY, null);
-        int size = c.getCount();
-        List<PreciousMove> results = new ArrayList<PreciousMove>(size);
-        while (c.moveToNext()) {
-            PreciousMove listItem = new PreciousMove();
-            int idIdx = c.getColumnIndex(PreciousMoveEntry._ID);
-            listItem._id = c.getLong(idIdx);
-            int itemIdIdx = c.getColumnIndex(PreciousMoveEntry.COLUMN_NAME_ITEM_ID);
-            listItem.itemId = c.getLong(itemIdIdx);
-            int itemNameIdx = c.getColumnIndex(PreciousItemEntry.COLUMN_NAME_ITEM_NAME);
-            listItem.itemName = c.getString(itemNameIdx);
-            int dateMovedIndx = c.getColumnIndex(PreciousMoveEntry.COLUMN_NAME_DATE);
-            long dateMoved = c.getLong(dateMovedIndx);
-            listItem.dateMoved = new Date(dateMoved);
-            int fromWhereIdx = c.getColumnIndex(PreciousMoveEntry.COLUMN_NAME_FROM);
-            listItem.fromWhere = c.getString(fromWhereIdx);
-            int locationIdx = c.getColumnIndex(PreciousMoveEntry.COLUMN_NAME_TO);
-            listItem.toWhere = c.getString(locationIdx);
-            int snapshotIdx = c.getColumnIndex(PreciousMoveEntry.COLUMN_SNAPSHOT);
-            listItem.snapshot = c.getString(snapshotIdx);
-            results.add(listItem);
-        }
-        return results;
+        DaoMaster dm = new DaoMaster(db);
+        DaoSession session = dm.newSession();
+        QueryBuilder<T> qb = session.queryBuilder(type);
+        LazyList<T> lazyList = qb.listLazy();
+        return lazyList;
+    }
+
+    public long insertNewCategory(PreciousCategory newCategory) {
+        return insertNewRecord(newCategory);
+    }
+
+    public long insertNewItem(PreciousItem newItem) {
+        return insertNewRecord(newItem);
     }
 
     public long insertNewMove(PreciousMove newMove) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues moveValues = new ContentValues();
-        moveValues.put(PreciousMoveEntry.COLUMN_NAME_ITEM_ID, newMove.getItemId());
-        moveValues.put(PreciousMoveEntry.COLUMN_NAME_DATE, newMove.getDateMoved().getTime());
-        moveValues.put(PreciousMoveEntry.COLUMN_NAME_FROM, newMove.getFromWhere());
-        moveValues.put(PreciousMoveEntry.COLUMN_NAME_TO, newMove.getToWhere());
-        moveValues.put(PreciousMoveEntry.COLUMN_SNAPSHOT, newMove.getSnapshot());
-        long insertSuccessful = db.insert(PreciousMoveTable.TABLE_NAME, null, moveValues);
+        return insertNewRecord(newMove);
+    }
 
-        db = dbHelper.getWritableDatabase();
-        ContentValues itemValues = new ContentValues();
-        itemValues.put(PreciousItemEntry.COLUMN_NAME_LOC, newMove.toWhere);
-        String whereClause = PreciousItemEntry._ID + "=?";
-        String[] whereArgs = { String.valueOf(newMove.getItemId()) };
-        long updateSuccessful = db.update(PreciousItemTable.TABLE_NAME, itemValues, whereClause, whereArgs);
-        return insertSuccessful & updateSuccessful; // TODO change algorithm
+    @SuppressWarnings("unchecked")
+    private <T> long insertNewRecord(T dataObject) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DaoMaster dm = new DaoMaster(db);
+        DaoSession session = dm.newSession();
+        AbstractDao<T, Long> dao = (AbstractDao<T, Long>) session.getDao(dataObject.getClass());
+        return dao.insert(dataObject);
     }
 
     public void broadcast(String intentMessage) {
@@ -144,40 +143,6 @@ public class PreciousTrackerModel {
     public void registerBroadcastReceiver(BroadcastReceiver receiver, String action) {
         IntentFilter filter = new IntentFilter(action);
         broadcastManager.registerReceiver(receiver, filter);
-    }
-
-    public List<PreciousCategory> getCategoryList() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String[] columns = new String[] { PreciousCategoryEntry._ID, PreciousCategoryEntry.COLUMN_NAME_NAME };
-        Cursor c = db.query(PreciousCategoryTable.TABLE_NAME, columns, null, null, null, null, null, null);
-        List<PreciousCategory> result = new ArrayList<PreciousCategory>(c.getCount());
-        while (c.moveToNext()) {
-            PreciousCategory category = new PreciousCategory();
-            int idIdx = c.getColumnIndex(PreciousCategoryEntry._ID);
-            category.set_id(c.getLong(idIdx));
-            int nameIdx = c.getColumnIndex(PreciousCategoryEntry.COLUMN_NAME_NAME);
-            category.setName(c.getString(nameIdx));
-            result.add(category);
-        }
-        return result;
-    }
-
-    public long insertNewCategory(PreciousCategory newCategory) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues categoryValues = new ContentValues();
-        categoryValues.put(PreciousCategoryEntry.COLUMN_NAME_NAME, newCategory.getName());
-        return db.insert(PreciousCategoryTable.TABLE_NAME, null, categoryValues);
-    }
-
-    public long insertNewItem(PreciousItem newItem) {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(PreciousItemEntry.COLUMN_NAME_ITEM_NAME, newItem.getName());
-        values.put(PreciousItemEntry.COLUMN_NAME_LOC, newItem.getLocation());
-        values.put(PreciousItemEntry.COLUMN_NAME_CATEGORY_ID, newItem.getCategoryId());
-        values.put(PreciousItemEntry.COLUMN_NAME_LAST_MOVED, new Date().getTime());
-        values.put(PreciousItemEntry.COLUMN_NAME_PHOTO, newItem.getPhotoFilePath());
-        return db.insert(PreciousItemTable.TABLE_NAME, null, values);
     }
 
     /**
@@ -210,5 +175,20 @@ public class PreciousTrackerModel {
             // TODO location of snapshot using internal storage
             return null;
         }
+    }
+
+    public PreciousCategory getCategory(Long catId) {
+        WhereCondition condition = PreciousCategoryDao.Properties.Id.eq(catId);
+        List<PreciousCategory> list = getRecord(PreciousCategory.class, condition);
+        return list.get(0);
+    }
+
+    private <T> List<T> getRecord(Class<T> clz, WhereCondition condition) {
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        DaoMaster master = new DaoMaster(db);
+        DaoSession session = master.newSession();
+        QueryBuilder<T> qb = session.queryBuilder(clz);
+        Query<T> query = qb.where(condition).build();
+        return query.list();
     }
 }

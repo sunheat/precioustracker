@@ -1,17 +1,5 @@
 package net.maxsoft.precioustracker.ui;
 
-import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousItem;
-import net.maxsoft.precioustracker.model.PreciousMove;
-import net.maxsoft.precioustracker.model.PreciousTrackerModel;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -20,19 +8,24 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
+import de.greenrobot.dao.query.LazyList;
+import net.maxsoft.precioustracker.R;
+import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
+import net.maxsoft.precioustracker.model.dao.PreciousMove;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * The AddMoveActivity used for creating move records for a precious item.
- * 
+ *
  * @author Max
- * 
  */
 public class AddMoveActivity extends Activity implements OnItemSelectedListener {
 
@@ -84,7 +77,10 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
      */
     private void populateItemList() {
         // get the item list from the database
-        itemList = model.getItemList();
+        LazyList<PreciousItem> lazyList = model.getItemList();
+        // since the list is database connected, make a copy for presentation
+        itemList = new ArrayList<PreciousItem>(lazyList.size() + 1);
+        itemList.addAll(lazyList);
         // add an item for triggering new new item creation activity
         itemList.add(getNewItem());
         // using ArrayAdapter to display items
@@ -96,6 +92,25 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
         lstItem.setAdapter(adapter);
         // sets item selection listener
         lstItem.setOnItemSelectedListener(this);
+
+        // select the item if a selection already exists
+        getPreciousMove(); // prevent null
+        long itemID = newMove.getItem();
+        if (itemID != 0) {
+            // create a map of ID and index for easier access
+            Map<Long, Integer> itemMap = getItemMap(itemList);
+            lstItem.setSelection(itemMap.get(itemID));
+        }
+    }
+
+    private Map<Long, Integer> getItemMap(List<PreciousItem> itemList) {
+        Map<Long, Integer> itemMap = new HashMap<>();
+        int i = 0; // need to track position in the list
+        for (PreciousItem item : itemList) {
+            itemMap.put(item.getId(), i);
+            i++;
+        }
+        return itemMap;
     }
 
     /**
@@ -106,43 +121,43 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
         PreciousItem newItem = new PreciousItem();
         newItem.setName(getResources().getString(R.string.createNewItem));
         // sets a special ID to represent an uncreated new item
-        newItem.set_id(PreciousTrackerModel.CREATE_NEW_ITEM_ID);
+        newItem.setId(PreciousTrackerModel.CREATE_NEW_ITEM_ID);
         return newItem;
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-        // respond to image capture results
-        case PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-            if (resultCode == RESULT_OK) {
-                // make sure the item object isn't null
-                getPreciousMove();
+            // respond to image capture results
+            case PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    // make sure the item object isn't null
+                    getPreciousMove();
 
-                // prepare the Uri object to use with ImageView
-                String snapshotPath = newMove.getSnapshot();
-                File file = new File(snapshotPath);
-                Uri imageUri = Uri.fromFile(file);
+                    // prepare the Uri object to use with ImageView
+                    String snapshotPath = newMove.getSnapshotFilePath();
+                    File file = new File(snapshotPath);
+                    Uri imageUri = Uri.fromFile(file);
 
-                ImageView imgSnapshot = (ImageView) findViewById(R.id.imgSnapshot);
-                imgSnapshot.setImageURI(imageUri);
+                    ImageView imgSnapshot = (ImageView) findViewById(R.id.imgSnapshot);
+                    imgSnapshot.setImageURI(imageUri);
 
-                newMove.setSnapshot(snapshotPath);
-            }
-            break;
-        case PreciousTrackerModel.REQ_CODE_CREATE_ITEM:
-            if (resultCode == RESULT_OK) {
-                // make sure the item object isn't null
-                getPreciousMove();
-                // get the newly created item ID from intent's extras
-                Bundle extras = data.getExtras();
-                long itemId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_ITEM_ID);
-                newMove.setItemId(itemId);
+                    newMove.setSnapshotFilePath(snapshotPath);
+                }
+                break;
+            case PreciousTrackerModel.REQ_CODE_CREATE_ITEM:
+                if (resultCode == RESULT_OK) {
+                    // make sure the item object isn't null
+                    getPreciousMove();
+                    // get the newly created item ID from intent's extras
+                    Bundle extras = data.getExtras();
+                    long itemId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_ITEM_ID);
+                    newMove.setItem(itemId);
 
-                // refreshes the item list
-                populateItemList();
-            }
-            break;
+                    // refreshes the item list
+                    populateItemList();
+                }
+                break;
         }
     }
 
@@ -158,12 +173,12 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 
     /**
      * Handles taking snapshot action.
-     * 
+     *
      * @param v
      */
     public void onSnapshot(View v) {
         String snapshotFilePath = model.getOutputMediaFilePath();
-        getPreciousMove().setSnapshot(snapshotFilePath);
+        getPreciousMove().setSnapshotFilePath(snapshotFilePath);
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         File file = new File(snapshotFilePath);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(file));
@@ -172,7 +187,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 
     /**
      * Handles save button click.
-     * 
+     *
      * @param v
      */
     public void onSave(View v) {
@@ -208,7 +223,7 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
 
     /**
      * Handles cancel button click.
-     * 
+     *
      * @param v
      */
     public void onCancel(View v) {
@@ -219,9 +234,9 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
     /**
      * Initializes and returns the PreciousMove object that represents the
      * precious move database record to be created.
-     * 
+     *
      * @return the PreciousMove objects representing the precious move database
-     *         record to be created
+     * record to be created
      */
     private PreciousMove getPreciousMove() {
         if (newMove == null) {
@@ -233,14 +248,14 @@ public class AddMoveActivity extends Activity implements OnItemSelectedListener 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         PreciousItem item = itemList.get(position);
-        if (item.get_id() == PreciousTrackerModel.CREATE_NEW_ITEM_ID) {
+        if (item.getId() == PreciousTrackerModel.CREATE_NEW_ITEM_ID) {
             // launch the CreateItemActivity to create a new item
             Intent intent = new Intent(this, CreateItemActivity.class);
             startActivityForResult(intent, PreciousTrackerModel.REQ_CODE_CREATE_ITEM);
         } else {
             // set the selected item to the new move record
             getPreciousMove();
-            newMove.setItemId(item.get_id());
+            newMove.setItem(item.getId());
         }
     }
 
