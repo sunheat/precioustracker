@@ -1,5 +1,6 @@
 package net.maxsoft.precioustracker.ui;
 
+import android.content.Intent;
 import net.maxsoft.precioustracker.R;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
 import net.maxsoft.precioustracker.model.dao.PreciousCategory;
@@ -80,7 +81,11 @@ public class CreateCategoryActivity extends Activity {
 		String categroyName = ((TextView) findViewById(R.id.txtCategoryName)).getText().toString();
 		newCategory.setName(categroyName);
 		model.insertNewCategory(newCategory);
-		setResult(RESULT_OK);
+
+        // return the result
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID, newCategory.getId());
+		setResult(RESULT_OK, returnIntent);
 		finish();
 	}
 

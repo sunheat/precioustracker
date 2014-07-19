@@ -93,10 +93,13 @@ public class MainActivity extends FragmentActivity implements TabListener {
 			switch (requestCode) {
 			case PreciousTrackerModel.REQ_CODE_ADD_MOVE:
 				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_MOVE_LIST);
+                break;
 			case PreciousTrackerModel.REQ_CODE_CREATE_ITEM:
 				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_ITEM_LIST);
+                break;
 			case PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY:
 				model.broadcast(PreciousTrackerModel.INTENT_MSG_REFRESH_CATEGORY_LIST);
+                break;
 			}
 		}
 	}

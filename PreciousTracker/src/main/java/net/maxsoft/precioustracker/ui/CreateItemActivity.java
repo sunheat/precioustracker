@@ -1,13 +1,5 @@
 package net.maxsoft.precioustracker.ui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.maxsoft.precioustracker.R;
-import net.maxsoft.precioustracker.model.PreciousTrackerModel;
-import net.maxsoft.precioustracker.model.dao.PreciousCategory;
-import net.maxsoft.precioustracker.model.dao.PreciousItem;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
@@ -19,19 +11,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.Spinner;
-import android.widget.TextView;
 import de.greenrobot.dao.query.LazyList;
+import net.maxsoft.precioustracker.R;
+import net.maxsoft.precioustracker.model.PreciousTrackerModel;
+import net.maxsoft.precioustracker.model.dao.PreciousCategory;
+import net.maxsoft.precioustracker.model.dao.PreciousItem;
+
+import java.io.File;
+import java.util.*;
 
 /**
  * The CreateItemActivity used for creating item records.
- * 
+ *
  * @author Max
- * 
  */
 public class CreateItemActivity extends Activity implements OnItemSelectedListener {
 
@@ -84,12 +78,33 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
         Spinner lstCategory = (Spinner) findViewById(R.id.lstCategory);
         lstCategory.setAdapter(adapter);
         lstCategory.setOnItemSelectedListener(this);
+
+        // select the item if a selection already exists
+        getPreciousItem(); // prevent null
+        Long categoryID = newItem.getCategory();
+        if (categoryID != null) {
+            // create a map of ID and index for easier access
+            Map<Long, Integer> categoryMap = getCategoryListMap(categoryList);
+            int i = categoryMap.get(categoryID);
+            lstCategory.setSelection(i);
+        }
+    }
+
+    private Map<Long, Integer> getCategoryListMap(List<PreciousCategory> categoryList) {
+        Map<Long, Integer> categoryMap = new HashMap<>();
+        int i = 0; // need to know the place in the list, which is the place in the spinner
+        for (PreciousCategory category : categoryList) {
+            Long categoryId = category.getId();
+            categoryMap.put(categoryId, i);
+            i++;
+        }
+        return categoryMap;
     }
 
     /**
      * Returns a category item for the spinner that can be used to trigger new
      * category creation.
-     * 
+     *
      * @return
      */
     private PreciousCategory getNewCategory() {
@@ -103,9 +118,9 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
     /**
      * Initializes and returns the PreciousItem object that represents the
      * precious item database record to be created.
-     * 
+     *
      * @return the PreciousItem object representing the precious item database
-     *         record to be created
+     * record to be created
      */
     private PreciousItem getPreciousItem() {
         if (newItem == null) {
@@ -126,12 +141,16 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
         return super.onOptionsItemSelected(item);
     }
 
-    /** handles cancel button click */
+    /**
+     * handles cancel button click
+     */
     public void onCancel(View v) {
         finish();
     }
 
-    /** handles save button click */
+    /**
+     * handles save button click
+     */
     public void onSave(View v) {
         String itemName = ((TextView) findViewById(R.id.txtItemName)).getText().toString();
         String itemLoc = ((TextView) findViewById(R.id.txtLocation)).getText().toString();
@@ -140,8 +159,13 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
         getPreciousItem();
         newItem.setName(itemName);
         newItem.setLocation(itemLoc);
+        newItem.setDateCreated(new Date());
         model.insertNewItem(newItem);
-        setResult(RESULT_OK);
+
+        // return with results
+        Intent returnIntent = new Intent();
+        returnIntent.putExtra(PreciousTrackerModel.EXTRA_KEY_NEW_ITEM_ID, newItem.getId());
+        setResult(RESULT_OK, returnIntent);
 
         finish();
     }
@@ -179,7 +203,7 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
 
     /**
      * Handles portrait taking action.
-     * 
+     *
      * @param v
      */
     public void onTakePortrait(View v) {
@@ -194,37 +218,37 @@ public class CreateItemActivity extends Activity implements OnItemSelectedListen
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-        // respond to image capture results
-        case PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
-            if (resultCode == RESULT_OK) {
-                // make sure the item object isn't null
-                getPreciousItem();
+            // respond to image capture results
+            case PreciousTrackerModel.CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    // make sure the item object isn't null
+                    getPreciousItem();
 
-                // prepare the Uri object to use with ImageView
-                String photoFilePath = newItem.getPhotoFilePath();
-                File file = new File(photoFilePath);
-                Uri imageUri = Uri.fromFile(file);
+                    // prepare the Uri object to use with ImageView
+                    String photoFilePath = newItem.getPhotoFilePath();
+                    File file = new File(photoFilePath);
+                    Uri imageUri = Uri.fromFile(file);
 
-                ImageView imgPortrait = (ImageView) findViewById(R.id.imgPortrait);
-                imgPortrait.setImageURI(imageUri);
+                    ImageView imgPortrait = (ImageView) findViewById(R.id.imgPortrait);
+                    imgPortrait.setImageURI(imageUri);
 
-                newItem.setPhotoFilePath(photoFilePath);
-            }
-            break;
-        // respond to new category creation results
-        case PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY:
-            if (resultCode == RESULT_OK) {
-                // make sure the item object isn't null
-                getPreciousItem();
-                // get the newly created item ID from intent's extras
-                Bundle extras = data.getExtras();
-                long categoryId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID);
-                newItem.setCategory(categoryId);
+                    newItem.setPhotoFilePath(photoFilePath);
+                }
+                break;
+            // respond to new category creation results
+            case PreciousTrackerModel.REQ_CODE_CREATE_CATEGORY:
+                if (resultCode == RESULT_OK) {
+                    // make sure the item object isn't null
+                    getPreciousItem();
+                    // get the newly created item ID from intent's extras
+                    Bundle extras = data.getExtras();
+                    long categoryId = extras.getLong(PreciousTrackerModel.EXTRA_KEY_NEW_CATEGORY_ID);
+                    newItem.setCategory(categoryId);
 
-                // refreshes the item list
-                populateCategoryList();
-            }
-            break;
+                    // refreshes the category list
+                    populateCategoryList();
+                }
+                break;
         }
     }
 
