@@ -9,13 +9,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import net.maxsoft.precioustracker.model.dao.DaoMaster;
+import net.maxsoft.precioustracker.model.dao.*;
 import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
-import net.maxsoft.precioustracker.model.dao.DaoSession;
-import net.maxsoft.precioustracker.model.dao.PreciousCategory;
-import net.maxsoft.precioustracker.model.dao.PreciousCategoryDao;
-import net.maxsoft.precioustracker.model.dao.PreciousItem;
-import net.maxsoft.precioustracker.model.dao.PreciousMove;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -41,6 +36,8 @@ public class PreciousTrackerModel {
     public static final String INTENT_MSG_REFRESH_MOVE_LIST = "precioustracker.intent.refresh_move_list";
     public static final String INTENT_MSG_REFRESH_ITEM_LIST = "precioustracker.intent.refresh_item_list";
     public static final String INTENT_MSG_REFRESH_CATEGORY_LIST = "precioustracker.intent.refresh_category_list";
+    public static final String INTENT_MSG_QUICK_ADD_ID = "precioustracker.intent.quickAddId";
+
     public static final String IMG_FORMAT_STRING = "yyyyMMdd_HHmmss";
     public static final int LOADER_ID_MOVE_LIST = 6578;
     public static final long CREATE_NEW_ITEM_ID = -1;
@@ -126,6 +123,10 @@ public class PreciousTrackerModel {
         return insertNewRecord(newMove);
     }
 
+    public long insertNewQuickAdd(PreciousQuickAdd quickAdd) {
+        return insertNewRecord(quickAdd);
+    }
+
     @SuppressWarnings("unchecked")
     private <T> long insertNewRecord(T dataObject) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -191,4 +192,5 @@ public class PreciousTrackerModel {
         Query<T> query = qb.where(condition).build();
         return query.list();
     }
+
 }

@@ -39,5 +39,6 @@
     <string name="lblCategoryName">Category Name</string>
     <string name="title_activity_show_photo">ShowPhotoActivity</string>
     <string name="lblItemPhoto">Photo</string>
+    <string name="quick_snapshot">Quick Snapshot</string>
 
 </resources>

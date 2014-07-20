@@ -1,13 +1,11 @@
 package net.maxsoft.precioustracker.model.db;
-/**
- * 
- */
-
 
 import de.greenrobot.daogenerator.DaoGenerator;
 import de.greenrobot.daogenerator.Entity;
 import de.greenrobot.daogenerator.Property;
 import de.greenrobot.daogenerator.Schema;
+
+import static net.maxsoft.precioustracker.model.db.PreciousQuickAddMeta.*;
 
 /**
  * Used for generating DAOs with greenDAO
@@ -31,6 +29,7 @@ public class PreciousTrackerSchemaGenerator {
         Entity category = getCategoryEntity(schema);
         Entity item = getItemEntity(schema, category);
         createMoveEntity(schema, item);
+        createQuickAddEntity(schema, item);
 
         DaoGenerator gen = new DaoGenerator();
         gen.generateAll(schema, OUTPUT_DIR);
@@ -74,6 +73,19 @@ public class PreciousTrackerSchemaGenerator {
         move.addToOne(item, itemId);
         // adding relation to move on item
         item.addToMany(move, itemId);
+    }
+
+    private static void createQuickAddEntity(Schema schema, Entity item) {
+        Entity quickAdd = schema.addEntity(PreciousQuickAddMeta.TABLE_NAME);
+        quickAdd.addIdProperty();
+        quickAdd.addDateProperty(DATE_TAKEN);
+        quickAdd.addStringProperty(PHOTO_FILE_PATH);
+        quickAdd.addStringProperty(MEMO_TEXT);
+        quickAdd.addStringProperty(MEMO_RECORDING_FILE_PATH);
+        quickAdd.addBooleanProperty(PROCESSED_FLAG);
+        // adding relation to item
+        Property itemId = quickAdd.addLongProperty(REGARDING_ITEM).getProperty();
+        quickAdd.addToOne(item, itemId);
     }
 
 }
