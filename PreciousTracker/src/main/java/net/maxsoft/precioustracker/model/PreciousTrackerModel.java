@@ -1,22 +1,13 @@
 package net.maxsoft.precioustracker.model;
 
-import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.DATABASE_NAME;
-import static net.maxsoft.precioustracker.model.PreciousTrackerDbHelper.generateSampleData;
-
-import java.io.File;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
-import net.maxsoft.precioustracker.model.dao.*;
-import net.maxsoft.precioustracker.model.dao.DaoMaster.DevOpenHelper;
 import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -25,6 +16,13 @@ import de.greenrobot.dao.query.LazyList;
 import de.greenrobot.dao.query.Query;
 import de.greenrobot.dao.query.QueryBuilder;
 import de.greenrobot.dao.query.WhereCondition;
+import net.maxsoft.precioustracker.model.dao.*;
+
+import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 public class PreciousTrackerModel {
 
@@ -51,20 +49,33 @@ public class PreciousTrackerModel {
 
     private static PreciousTrackerModel instance;
 
-    private DevOpenHelper dbHelper;
+    private PreciousTrackerDbHelper dbHelper;
     private LocalBroadcastManager broadcastManager;
 
     protected PreciousTrackerModel(Context context) {
         if (dbHelper == null) {
-            dbHelper = new DaoMaster.DevOpenHelper(context, DATABASE_NAME, null);
-            generateSampleData(dbHelper);
+            dbHelper = new PreciousTrackerDbHelper(context);
             broadcastManager = LocalBroadcastManager.getInstance(context);
+            devSetup(context);
+        }
+    }
+
+    private void devSetup(Context context) {
+        ApplicationInfo appInfo = context.getApplicationInfo();
+        boolean debuggable = (0 != (appInfo.flags & ApplicationInfo.FLAG_DEBUGGABLE));
+        if (debuggable) {
+            // dev mode, populate sample data
+            dbHelper.generateSampleData();
         }
     }
 
     public static PreciousTrackerModel getInstance(Context context) {
         if (instance == null) {
-            instance = new PreciousTrackerModel(context);
+            synchronized (PreciousTrackerModel.class) {
+                if (instance == null) {
+                    instance = new PreciousTrackerModel(context);
+                }
+            }
         }
         return instance;
     }

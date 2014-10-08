@@ -31,6 +31,7 @@ public class QuickAddActivity extends Activity {
 
     @Override
     protected void onStart() {
+        super.onStart();
         if (model == null) {
             model = PreciousTrackerModel.getInstance(this);
         }
