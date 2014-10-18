@@ -2,7 +2,6 @@ package net.maxsoft.precioustracker.model;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import net.maxsoft.precioustracker.model.dao.*;
 
 import java.util.Date;
@@ -27,6 +26,11 @@ public class PreciousTrackerDbHelper extends OpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         DaoMaster master = new DaoMaster(db);
         DaoSession session = master.newSession();
+
+
+
+        // create tables if needed
+        DaoMaster.createAllTables(db, true);
 
         // clear the database first
         session.deleteAll(PreciousMove.class);

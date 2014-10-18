@@ -30,7 +30,7 @@ public final class PreciousMovesFragment extends Fragment {
 
 		this.context = container.getContext();
 
-		rootView = inflater.inflate(R.layout.recent_moves, null);
+		rootView = inflater.inflate(R.layout.recent_moves, container, false);
 
 		if (receiver == null) {
 			receiver = new RefreshMoveListBroadcastReceiver();
@@ -53,6 +53,7 @@ public final class PreciousMovesFragment extends Fragment {
 		Intent intent = new Intent(context, DisplayMoveActivity.class);
 		PreciousMove move = recentMoveList.get(position);
 		intent.putExtra(PreciousMove.INTENT_MESSAGE, move);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 		startActivity(intent);
 	}
 

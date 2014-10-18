@@ -50,12 +50,14 @@ public class PreciousCategoryFragment extends Fragment {
     }
 
     private void refreshList() {
-        PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
-        categoryList = model.getCategoryList();
-        ArrayAdapter<PreciousCategory> adapter = new ArrayAdapter<PreciousCategory>(getActivity(),
-                android.R.layout.simple_list_item_1, categoryList);
-        ListView listView = (ListView) getActivity().findViewById(R.id.lstCategory);
-        listView.setAdapter(adapter);
+        if (isAdded()) { // need to check otherwise getActivity() may be null
+            PreciousTrackerModel model = PreciousTrackerModel.getInstance(getActivity());
+            categoryList = model.getCategoryList();
+            ArrayAdapter<PreciousCategory> adapter = new ArrayAdapter<PreciousCategory>(getActivity(),
+                    android.R.layout.simple_list_item_1, categoryList);
+            ListView listView = (ListView) getActivity().findViewById(R.id.lstCategory);
+            listView.setAdapter(adapter);
+        }
     }
 
     private void onItemClick(int position) {

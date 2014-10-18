@@ -2,6 +2,8 @@ package net.maxsoft.precioustracker.ui;
 
 import java.io.File;
 
+import android.app.ActionBar;
+import android.view.MenuItem;
 import net.maxsoft.precioustracker.R;
 import net.maxsoft.precioustracker.model.PreciousTrackerModel;
 import net.maxsoft.precioustracker.util.SystemUiHider;
@@ -105,6 +107,10 @@ public class ShowPhotoActivity extends Activity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
+
+        // enable up button in action bar
+        ActionBar actionBar = getActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -160,5 +166,13 @@ public class ShowPhotoActivity extends Activity {
             ImageView imgPhoto = (ImageView) findViewById(R.id.imgPhotoFullScreen);
             imgPhoto.setImageURI(uri);
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
